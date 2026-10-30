@@ -4,7 +4,13 @@
   const list = document.getElementById("weekly-news");
   const status = document.getElementById("sync-status");
   const syncButton = document.getElementById("sync-button");
+  const rangeButtons = [...document.querySelectorAll(".range-button")];
+  const dateFrom = document.getElementById("date-from");
+  const dateTo = document.getElementById("date-to");
+  const applyCustomRange = document.getElementById("apply-custom-range");
   const dateFormat = new Intl.DateTimeFormat("fr-FR", { day: "2-digit", month: "long", year: "numeric" });
+  let selectedRange = 30;
+  let customDates = null;
 
   function safeDate(value) {
     const date = new Date(`${value}T12:00:00`);
@@ -75,25 +81,42 @@
   }
 
   function render(data) {
-    const items = Array.isArray(data?.items) ? data.items.filter(validItem) : [];
+    const allItems = Array.isArray(data?.items) ? data.items.filter(validItem) : [];
     list.replaceChildren();
 
+    const today = new Date();
+    today.setHours(23, 59, 59, 999);
+    const cutoff = customDates ? new Date(`${customDates.from}T00:00:00`) : new Date();
+    if (!customDates) {
+      cutoff.setHours(0, 0, 0, 0);
+      cutoff.setDate(cutoff.getDate() - selectedRange + 1);
+    }
+    const rangeEnd = customDates ? new Date(`${customDates.to}T23:59:59.999`) : today;
+    const rangeLabel = customDates
+      ? `du ${safeDate(customDates.from)} au ${safeDate(customDates.to)}`
+      : (selectedRange === 365 ? "1 an" : `${selectedRange} jours`);
+    const items = allItems.filter((item) => {
+      const published = new Date(`${item.publishedAt}T12:00:00`);
+      return !Number.isNaN(published.getTime()) && published >= cutoff && published <= rangeEnd;
+    });
+
     if (!items.length) {
-      list.append(makeText("div", "empty-card", data?.emptyMessage || "Aucune actualité suffisamment sourcée dans ce fichier de veille."));
-      status.textContent = "Aucun contenu vérifié à afficher";
+      const message = allItems.length
+        ? `Aucune actualité sourcée ${customDates ? rangeLabel : `sur les ${selectedRange === 365 ? "12 derniers mois" : `${selectedRange} derniers jours`}`}.`
+        : (data?.emptyMessage || "Aucune actualité suffisamment sourcée dans ce fichier de veille.");
+      list.append(makeText("div", "empty-card", message));
+      status.textContent = `${allItems.length} actualité${allItems.length === 1 ? "" : "s"} archivée${allItems.length === 1 ? "" : "s"} · ${rangeLabel}`;
       return;
     }
 
     items.sort((a, b) => (a.priority || 3) - (b.priority || 3) || b.publishedAt.localeCompare(a.publishedAt));
     items.forEach((item) => list.append(makeCard(item)));
 
-    const start = data.periodStart ? safeDate(data.periodStart) : "";
-    const end = data.periodEnd ? safeDate(data.periodEnd) : "";
     const updated = data.updatedAt ? new Date(data.updatedAt) : null;
     const updatedText = updated && !Number.isNaN(updated.getTime())
       ? new Intl.DateTimeFormat("fr-FR", { day: "2-digit", month: "long", hour: "2-digit", minute: "2-digit" }).format(updated)
       : "date inconnue";
-    status.textContent = `${items.length} actualités · semaine du ${start} au ${end} · synchronisée le ${updatedText}`;
+    status.textContent = `${items.length} actualité${items.length === 1 ? "" : "s"} · ${rangeLabel} · synchronisée le ${updatedText}`;
   }
 
   function sync() {
@@ -118,6 +141,34 @@
     };
     document.body.append(script);
   }
+
+  rangeButtons.forEach((button) => {
+    button.addEventListener("click", () => {
+      selectedRange = Number(button.dataset.range) || 30;
+      customDates = null;
+      applyCustomRange.classList.remove("is-active");
+      rangeButtons.forEach((candidate) => {
+        const isActive = candidate === button;
+        candidate.classList.toggle("is-active", isActive);
+        candidate.setAttribute("aria-pressed", String(isActive));
+      });
+      render(window.OFFICIER_WATCH_DATA);
+    });
+  });
+
+  applyCustomRange.addEventListener("click", () => {
+    if (!dateFrom.value || !dateTo.value || dateFrom.value > dateTo.value) {
+      status.textContent = "Choisis une date de début et une date de fin valides.";
+      return;
+    }
+    customDates = { from: dateFrom.value, to: dateTo.value };
+    applyCustomRange.classList.add("is-active");
+    rangeButtons.forEach((candidate) => {
+      candidate.classList.remove("is-active");
+      candidate.setAttribute("aria-pressed", "false");
+    });
+    render(window.OFFICIER_WATCH_DATA);
+  });
 
   syncButton.addEventListener("click", sync);
   render(window.OFFICIER_WATCH_DATA);
