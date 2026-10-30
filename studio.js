@@ -8,9 +8,56 @@
   const dateFrom = document.getElementById("date-from");
   const dateTo = document.getElementById("date-to");
   const applyCustomRange = document.getElementById("apply-custom-range");
+  const searchInput = document.getElementById("news-search");
+  const categoryTags = document.getElementById("category-tags");
+  const favoritesToggle = document.getElementById("favorites-toggle");
+  const favoriteCount = document.getElementById("favorite-count");
+  const quizSummary = document.getElementById("quiz-summary");
+  const quizIntro = document.getElementById("quiz-intro");
+  const quizPlay = document.getElementById("quiz-play");
+  const quizStart = document.getElementById("quiz-start");
+  const quizProgress = document.getElementById("quiz-progress");
+  const quizQuestion = document.getElementById("quiz-question");
+  const quizAnswers = document.getElementById("quiz-answers");
+  const quizFeedback = document.getElementById("quiz-feedback");
+  const quizNext = document.getElementById("quiz-next");
   const dateFormat = new Intl.DateTimeFormat("fr-FR", { day: "2-digit", month: "long", year: "numeric" });
+  const favoritesStorageKey = "officier-watch:favorites:v1";
+
   let selectedRange = 30;
   let customDates = null;
+  let selectedCategory = "";
+  let showFavorites = false;
+  let favoriteItems = loadFavorites();
+  let quizQuestions = [];
+  let quizIndex = 0;
+  let quizScore = 0;
+
+  function loadFavorites() {
+    try {
+      const saved = JSON.parse(localStorage.getItem(favoritesStorageKey) || "{}");
+      if (!saved || typeof saved !== "object" || Array.isArray(saved)) return new Map();
+      return new Map(Object.entries(saved).filter(([, item]) => validItem(item)));
+    } catch {
+      return new Map();
+    }
+  }
+
+  function saveFavorites() {
+    try {
+      localStorage.setItem(favoritesStorageKey, JSON.stringify(Object.fromEntries(favoriteItems)));
+    } catch {
+      status.textContent = "Le navigateur n’a pas pu enregistrer les favoris.";
+    }
+    updateFavoriteControls();
+  }
+
+  function updateFavoriteControls() {
+    favoriteCount.textContent = String(favoriteItems.size);
+    favoritesToggle.setAttribute("aria-pressed", String(showFavorites));
+    favoritesToggle.classList.toggle("is-active", showFavorites);
+    favoritesToggle.querySelector("[aria-hidden]").textContent = showFavorites ? "★" : "☆";
+  }
 
   function safeDate(value) {
     const date = new Date(`${value}T12:00:00`);
@@ -21,7 +68,7 @@
     if (!item || typeof item !== "object") return false;
     try {
       return Boolean(
-        item.title && item.publishedAt && item.sourceTitle && item.summary &&
+        item.id && item.title && item.publishedAt && item.sourceTitle && item.summary &&
         item.sourceUrl && new URL(item.sourceUrl).protocol === "https:"
       );
     } catch {
@@ -46,12 +93,34 @@
     top.append(makeText("span", "news-date", safeDate(item.publishedAt)));
     if (item.priority === 1) top.append(makeText("span", "priority-badge", "À connaître"));
 
+    const isFavorite = favoriteItems.has(item.id);
+    const favoriteButton = document.createElement("button");
+    favoriteButton.className = `favorite-button${isFavorite ? " is-favorite" : ""}`;
+    favoriteButton.type = "button";
+    favoriteButton.setAttribute("aria-pressed", String(isFavorite));
+    favoriteButton.setAttribute("aria-label", isFavorite ? "Retirer des favoris" : "Ajouter aux favoris");
+    favoriteButton.textContent = isFavorite ? "★ Favori" : "☆ Favoris";
+    favoriteButton.addEventListener("click", () => {
+      if (favoriteItems.has(item.id)) favoriteItems.delete(item.id);
+      else favoriteItems.set(item.id, item);
+      saveFavorites();
+      render(window.OFFICIER_WATCH_DATA);
+    });
+    top.append(favoriteButton);
+
     const title = makeText("h3", "news-title", item.title);
     const summary = makeText("p", "news-summary", item.summary);
     const reason = makeText("p", "news-relevance", item.whyItMatters || "");
 
     card.append(top, title, summary);
     if (item.legalStatus) card.append(makeText("p", "legal-status", item.legalStatus));
+
+    if (Array.isArray(item.tags) && item.tags.length) {
+      const tags = document.createElement("div");
+      tags.className = "news-item-tags";
+      item.tags.slice(0, 6).forEach((tag) => tags.append(makeText("span", "news-item-tag", tag)));
+      card.append(tags);
+    }
 
     if (Array.isArray(item.keyPoints) && item.keyPoints.length) {
       const points = document.createElement("ul");
@@ -80,32 +149,168 @@
     return card;
   }
 
+  function getDateRange() {
+    const today = new Date();
+    today.setHours(23, 59, 59, 999);
+    if (customDates) {
+      return {
+        start: new Date(`${customDates.from}T00:00:00`),
+        end: new Date(`${customDates.to}T23:59:59.999`),
+        label: `du ${safeDate(customDates.from)} au ${safeDate(customDates.to)}`
+      };
+    }
+    const start = new Date();
+    start.setHours(0, 0, 0, 0);
+    start.setDate(start.getDate() - selectedRange + 1);
+    return { start, end: today, label: selectedRange === 365 ? "1 an" : `${selectedRange} jours` };
+  }
+
+  function categoryMatches(item) {
+    if (!selectedCategory) return true;
+    return (item.category || "Actualité") === selectedCategory;
+  }
+
+  function searchMatches(item, query) {
+    if (!query) return true;
+    const searchable = [
+      item.title, item.category, item.summary, item.whyItMatters, item.legalStatus,
+      ...(Array.isArray(item.keyPoints) ? item.keyPoints : []),
+      ...(Array.isArray(item.tags) ? item.tags : [])
+    ].filter(Boolean).join(" ").toLocaleLowerCase("fr-FR");
+    return searchable.includes(query);
+  }
+
+  function renderCategoryTags(items) {
+    const categories = [...new Set(items.map((item) => item.category || "Actualité"))].sort((a, b) => a.localeCompare(b, "fr"));
+    if (selectedCategory && !categories.includes(selectedCategory)) selectedCategory = "";
+    categoryTags.replaceChildren();
+
+    const choices = [{ label: "Toutes", value: "" }, ...categories.map((category) => ({ label: category, value: category }))];
+    choices.forEach(({ label, value }) => {
+      const button = document.createElement("button");
+      button.type = "button";
+      button.className = `category-tag${selectedCategory === value ? " is-active" : ""}`;
+      button.textContent = label;
+      button.setAttribute("aria-pressed", String(selectedCategory === value));
+      button.addEventListener("click", () => {
+        selectedCategory = value;
+        render(window.OFFICIER_WATCH_DATA);
+      });
+      categoryTags.append(button);
+    });
+  }
+
+  function buildQuizQuestions(items) {
+    const factPool = items.flatMap((item) => (Array.isArray(item.keyPoints) ? item.keyPoints : [])
+      .filter((point) => typeof point === "string" && point.trim())
+      .map((point) => ({ point: point.trim(), itemId: item.id })));
+
+    return items.map((item) => {
+      const ownFacts = (Array.isArray(item.keyPoints) ? item.keyPoints : []).filter((point) => typeof point === "string" && point.trim());
+      const correct = ownFacts[0]?.trim() || item.summary;
+      const distractors = [...new Set(factPool
+        .filter((fact) => fact.itemId !== item.id && fact.point !== correct)
+        .map((fact) => fact.point))];
+      const choices = shuffle([correct, ...shuffle(distractors).slice(0, 3)]);
+      return { title: item.title, correct, choices };
+    });
+  }
+
+  function shuffle(items) {
+    const result = [...items];
+    for (let i = result.length - 1; i > 0; i -= 1) {
+      const j = Math.floor(Math.random() * (i + 1));
+      [result[i], result[j]] = [result[j], result[i]];
+    }
+    return result;
+  }
+
+  function updateQuizAvailability(items) {
+    quizQuestions = buildQuizQuestions(items);
+    quizSummary.textContent = `${items.length} actualité${items.length === 1 ? "" : "s"} dans le quiz`;
+    quizStart.disabled = !items.length;
+    if (!items.length) quizStart.textContent = "Quiz indisponible";
+    else if (quizStart.textContent === "Quiz indisponible") quizStart.textContent = "Commencer le quiz →";
+  }
+
+  function showQuizQuestion() {
+    const question = quizQuestions[quizIndex];
+    quizProgress.textContent = `Question ${quizIndex + 1} sur ${quizQuestions.length} · ${quizScore} bonne${quizScore === 1 ? "" : "s"} réponse${quizScore === 1 ? "" : "s"}`;
+    quizQuestion.textContent = `Pour « ${question.title} », quel élément figure dans la veille ?`;
+    quizAnswers.replaceChildren();
+    quizFeedback.textContent = "";
+    quizNext.hidden = true;
+    question.choices.forEach((choice) => {
+      const button = document.createElement("button");
+      button.type = "button";
+      button.className = "quiz-answer";
+      button.textContent = choice;
+      button.addEventListener("click", () => {
+        [...quizAnswers.querySelectorAll("button")].forEach((candidate) => { candidate.disabled = true; });
+        const isCorrect = choice === question.correct;
+        if (isCorrect) quizScore += 1;
+        button.classList.add(isCorrect ? "is-correct" : "is-wrong");
+        if (!isCorrect) {
+          [...quizAnswers.querySelectorAll("button")].find((candidate) => candidate.textContent === question.correct)?.classList.add("is-correct");
+        }
+        quizFeedback.textContent = isCorrect ? "Bonne réponse !" : `La bonne réponse était : ${question.correct}`;
+        quizProgress.textContent = `Question ${quizIndex + 1} sur ${quizQuestions.length} · ${quizScore} bonne${quizScore === 1 ? "" : "s"} réponse${quizScore === 1 ? "" : "s"}`;
+        quizNext.textContent = quizIndex + 1 === quizQuestions.length ? "Voir mon résultat" : "Question suivante →";
+        quizNext.hidden = false;
+      });
+      quizAnswers.append(button);
+    });
+  }
+
+  function startQuiz() {
+    if (!quizQuestions.length) return;
+    quizQuestions = shuffle(quizQuestions);
+    quizIndex = 0;
+    quizScore = 0;
+    quizIntro.hidden = true;
+    quizPlay.hidden = false;
+    showQuizQuestion();
+  }
+
+  function renderQuizResult() {
+    quizProgress.textContent = "Quiz terminé";
+    quizQuestion.textContent = `Ton résultat : ${quizScore} / ${quizQuestions.length}`;
+    quizAnswers.replaceChildren();
+    quizFeedback.textContent = quizScore === quizQuestions.length
+      ? "Parfait, tu as retenu tous les points clés de la veille !"
+      : "Tu peux refaire le quiz ou consulter les actualités pour revoir les points clés.";
+    quizNext.hidden = true;
+    quizIntro.hidden = false;
+    quizStart.textContent = "Recommencer le quiz →";
+  }
+
   function render(data) {
     const allItems = Array.isArray(data?.items) ? data.items.filter(validItem) : [];
     list.replaceChildren();
+    renderCategoryTags(allItems);
+    updateFavoriteControls();
+    updateQuizAvailability(allItems);
 
-    const today = new Date();
-    today.setHours(23, 59, 59, 999);
-    const cutoff = customDates ? new Date(`${customDates.from}T00:00:00`) : new Date();
-    if (!customDates) {
-      cutoff.setHours(0, 0, 0, 0);
-      cutoff.setDate(cutoff.getDate() - selectedRange + 1);
-    }
-    const rangeEnd = customDates ? new Date(`${customDates.to}T23:59:59.999`) : today;
-    const rangeLabel = customDates
-      ? `du ${safeDate(customDates.from)} au ${safeDate(customDates.to)}`
-      : (selectedRange === 365 ? "1 an" : `${selectedRange} jours`);
-    const items = allItems.filter((item) => {
-      const published = new Date(`${item.publishedAt}T12:00:00`);
-      return !Number.isNaN(published.getTime()) && published >= cutoff && published <= rangeEnd;
-    });
+    const { start, end, label } = getDateRange();
+    const query = searchInput.value.trim().toLocaleLowerCase("fr-FR");
+    const dateItems = showFavorites
+      ? [...favoriteItems.values()]
+      : allItems.filter((item) => {
+        const published = new Date(`${item.publishedAt}T12:00:00`);
+        return !Number.isNaN(published.getTime()) && published >= start && published <= end;
+      });
+    const items = dateItems.filter((item) => categoryMatches(item) && searchMatches(item, query));
 
     if (!items.length) {
-      const message = allItems.length
-        ? `Aucune actualité sourcée ${customDates ? rangeLabel : `sur les ${selectedRange === 365 ? "12 derniers mois" : `${selectedRange} derniers jours`}`}.`
-        : (data?.emptyMessage || "Aucune actualité suffisamment sourcée dans ce fichier de veille.");
+      const message = showFavorites
+        ? "Aucun favori ne correspond à cette recherche. Les favoris restent enregistrés dans ce navigateur."
+        : allItems.length
+          ? `Aucune actualité ne correspond à cette période et à ces filtres (${label}).`
+          : (data?.emptyMessage || "Aucune actualité suffisamment sourcée dans ce fichier de veille.");
       list.append(makeText("div", "empty-card", message));
-      status.textContent = `${allItems.length} actualité${allItems.length === 1 ? "" : "s"} archivée${allItems.length === 1 ? "" : "s"} · ${rangeLabel}`;
+      status.textContent = showFavorites
+        ? `${favoriteItems.size} favori${favoriteItems.size === 1 ? "" : "s"} enregistré${favoriteItems.size === 1 ? "" : "s"}`
+        : `${allItems.length} actualité${allItems.length === 1 ? "" : "s"} archivée${allItems.length === 1 ? "" : "s"} · ${label}`;
       return;
     }
 
@@ -116,7 +321,8 @@
     const updatedText = updated && !Number.isNaN(updated.getTime())
       ? new Intl.DateTimeFormat("fr-FR", { day: "2-digit", month: "long", hour: "2-digit", minute: "2-digit" }).format(updated)
       : "date inconnue";
-    status.textContent = `${items.length} actualité${items.length === 1 ? "" : "s"} · ${rangeLabel} · synchronisée le ${updatedText}`;
+    const filterLabel = showFavorites ? "favoris" : label;
+    status.textContent = `${items.length} actualité${items.length === 1 ? "" : "s"} affichée${items.length === 1 ? "" : "s"} · ${allItems.length} dans l’archive · ${filterLabel} · synchronisée le ${updatedText}`;
   }
 
   function sync() {
@@ -170,6 +376,17 @@
     render(window.OFFICIER_WATCH_DATA);
   });
 
+  searchInput.addEventListener("input", () => render(window.OFFICIER_WATCH_DATA));
+  favoritesToggle.addEventListener("click", () => {
+    showFavorites = !showFavorites;
+    render(window.OFFICIER_WATCH_DATA);
+  });
+  quizStart.addEventListener("click", startQuiz);
+  quizNext.addEventListener("click", () => {
+    quizIndex += 1;
+    if (quizIndex >= quizQuestions.length) renderQuizResult();
+    else showQuizQuestion();
+  });
   syncButton.addEventListener("click", sync);
   render(window.OFFICIER_WATCH_DATA);
 })();
