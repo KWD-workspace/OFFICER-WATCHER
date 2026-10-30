@@ -19,6 +19,7 @@
         <nav class="main-nav" aria-label="Navigation principale">
           <a class="nav-link selected" href="#accueil"><span class="nav-icon">⌂</span>Accueil</a>
           <a class="nav-link" href="#veille"><span class="nav-icon">◷</span>Veille</a>
+          <a class="nav-link" href="#quiz"><span class="nav-icon">?</span>Quiz d’actualité</a>
           <a class="nav-link" href="#reviser"><span class="nav-icon">▤</span>Réviser</a>
           <a class="nav-link" href="#copilote"><span class="nav-icon">✳</span>Copilote</a>
           <a class="nav-link" href="#lois"><span class="nav-icon">§</span>Lois & réformes</a>
@@ -80,7 +81,26 @@
               <label class="date-field">Au <input id="date-to" type="date" aria-label="Date de fin"></label>
               <button class="apply-range-button" id="apply-custom-range" type="button">Appliquer</button>
             </div>
+            <div class="news-tools">
+              <label class="search-field"><span aria-hidden="true">⌕</span><input id="news-search" type="search" placeholder="Rechercher dans les actualités…" aria-label="Rechercher dans les actualités"></label>
+              <button class="favorites-toggle" id="favorites-toggle" type="button" aria-pressed="false"><span aria-hidden="true">☆</span> Favoris <span class="favorite-count" id="favorite-count">0</span></button>
+            </div>
+            <div class="category-tags" id="category-tags" role="group" aria-label="Filtrer par catégorie"></div>
             <div class="news-list" id="weekly-news" aria-live="polite"></div>
+          </section>
+
+          <section class="content-section" id="quiz">
+            <div class="section-title-row"><div><div class="section-kicker">S’ENTRAÎNER À RETENIR L’ESSENTIEL</div><h2>Quiz d’actualité</h2></div><span class="section-aside" id="quiz-summary">Basé sur toute l’archive</span></div>
+            <div class="quiz-card">
+              <div class="quiz-intro" id="quiz-intro"><div><h3>Teste tes connaissances sur la veille</h3><p>Une question par actualité archivée, avec des réponses tirées des faits et chiffres de la veille. Le filtre de période n’enlève aucune question au quiz.</p></div><button class="quiz-button" id="quiz-start" type="button">Commencer le quiz <span>→</span></button></div>
+              <div class="quiz-play" id="quiz-play" hidden>
+                <div class="quiz-progress" id="quiz-progress"></div>
+                <h3 class="quiz-question" id="quiz-question"></h3>
+                <div class="quiz-answers" id="quiz-answers"></div>
+                <p class="quiz-feedback" id="quiz-feedback" aria-live="polite"></p>
+                <button class="quiz-button" id="quiz-next" type="button" hidden>Question suivante <span>→</span></button>
+              </div>
+            </div>
           </section>
 
           <section class="content-section" id="reviser">
