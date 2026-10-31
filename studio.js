@@ -474,27 +474,37 @@
 
   function answerCopilot(items, query) {
     copilotResponse.replaceChildren();
-    const terms = normalizeText(query).split(/\s+/).filter((term) => term.length > 1);
+    const normalizedQuery = normalizeText(query).replace(/[^a-z0-9]+/g, " ").trim();
+    const terms = [...new Set(normalizedQuery.split(/\s+/).filter((term) => term.length > 1 || /^\d+$/.test(term)))];
     if (!terms.length) {
-      copilotResponse.append(makeText("p", "tool-hint", "Entre un thème ou une notion pour chercher dans l’archive."));
+      copilotResponse.append(makeText("p", "tool-hint", "Entre un nom de loi, un numéro d’article, une référence juridique ou un thème."));
       return;
     }
     const results = items.map((item) => {
-      const fields = [item.title, item.category, item.summary, item.whyItMatters, item.legalStatus,
+      const rawFields = [item.title, item.category, item.summary, item.whyItMatters, item.legalStatus,
+        item.sourceTitle, item.sourceUrl,
         ...(Array.isArray(item.keyPoints) ? item.keyPoints : []),
-        ...(Array.isArray(item.tags) ? item.tags : [])].filter(Boolean).map(normalizeText);
-      const score = terms.reduce((total, term) => total + fields.reduce((sum, field, index) => {
-        if (!field.includes(term)) return sum;
-        return sum + (index === 0 ? 3 : index <= 2 ? 2 : 1);
-      }, 0), 0);
-      return { item, score };
+        ...(Array.isArray(item.tags) ? item.tags : []),
+        ...(Array.isArray(item.sources) ? item.sources.flatMap((source) => [source.title, source.url]) : []),
+        ...(Array.isArray(item.legalReferences) ? item.legalReferences.flatMap((reference) => [reference.title, reference.reference, reference.url]) : [])
+      ].filter(Boolean);
+      const fields = rawFields.map((field) => normalizeText(field).replace(/[^a-z0-9]+/g, " ").trim());
+      const searchableText = fields.join(" ");
+      let score = 0;
+      terms.forEach((term) => {
+        const fieldIndex = fields.findIndex((field) => field.includes(term));
+        if (fieldIndex >= 0) score += fieldIndex === 0 ? 5 : fieldIndex <= 4 ? 3 : 1;
+      });
+      if (searchableText.includes(normalizedQuery)) score += 8;
+      if (terms.every((term) => searchableText.includes(term))) score += 5;
+      return { item, score, searchableText };
     }).filter((result) => result.score > 0).sort((a, b) => b.score - a.score || b.item.publishedAt.localeCompare(a.item.publishedAt)).slice(0, 5);
 
     if (!results.length) {
-      copilotResponse.append(makeText("p", "tool-hint", "Je n’ai pas trouvé de réponse dans l’archive actuelle. Essaie un autre mot-clé ; le copilote ne complète pas les informations manquantes par supposition."));
+      copilotResponse.append(makeText("p", "tool-hint", `Je ne trouve pas « ${query} » dans les fiches et sources actuellement archivées. Essaie le nom court de la loi, son numéro ou un mot-clé. Cette recherche n’interroge pas encore l’ensemble du Web.`));
       return;
     }
-    copilotResponse.append(makeText("p", "copilot-result-intro", `${results.length} source${results.length === 1 ? "" : "s"} de la veille correspondent à « ${query} » :`));
+    copilotResponse.append(makeText("p", "copilot-result-intro", `${results.length} fiche${results.length === 1 ? "" : "s"} de la veille correspondent à « ${query} ». Voici les informations et les références archivées :`));
     const resultList = document.createElement("div");
     resultList.className = "copilot-results";
     results.forEach(({ item }) => {
@@ -503,8 +513,21 @@
       card.append(makeText("span", "news-date", `${item.category || "Actualité"} · ${safeDate(item.publishedAt)}`));
       card.append(makeText("h4", "", item.title));
       card.append(makeText("p", "", item.summary));
+      card.append(makeText("p", "copilot-legal-status", item.legalStatus || "Statut juridique non précisé dans cette fiche."));
+      if (Array.isArray(item.keyPoints) && item.keyPoints.length) {
+        const points = document.createElement("ul");
+        points.className = "copilot-result-points";
+        item.keyPoints.slice(0, 3).forEach((point) => points.append(makeText("li", "", point)));
+        card.append(points);
+      }
       if (item.whyItMatters) card.append(makeText("p", "copilot-relevance", item.whyItMatters));
-      card.append(makeSourceLink(item.sourceTitle, item.sourceUrl));
+      const sourceLinks = document.createElement("div");
+      sourceLinks.className = "copilot-source-links";
+      const sources = [{ title: item.sourceTitle, url: item.sourceUrl }]
+        .concat(Array.isArray(item.sources) ? item.sources : [])
+        .filter((source, index, all) => source?.title && typeof source.url === "string" && source.url.startsWith("https://") && all.findIndex((candidate) => candidate?.url === source.url) === index);
+      sources.forEach((source) => sourceLinks.append(makeSourceLink(source.title, source.url)));
+      card.append(sourceLinks);
       resultList.append(card);
     });
     copilotResponse.append(resultList);
