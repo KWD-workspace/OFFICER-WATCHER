@@ -23,17 +23,54 @@
   const quizAnswers = document.getElementById("quiz-answers");
   const quizFeedback = document.getElementById("quiz-feedback");
   const quizNext = document.getElementById("quiz-next");
+  const copilotForm = document.getElementById("copilot-form");
+  const copilotQuery = document.getElementById("copilot-query");
+  const copilotResponse = document.getElementById("copilot-response");
+  const legalList = document.getElementById("legal-list");
+  const librarySearch = document.getElementById("library-search");
+  const libraryList = document.getElementById("library-list");
+  const libraryResultCount = document.getElementById("library-result-count");
+  const progressSummary = document.getElementById("progress-summary");
+  const progressBar = document.getElementById("progress-bar");
+  const readCount = document.getElementById("read-count");
+  const bestQuizScoreElement = document.getElementById("best-quiz-score");
+  const progressTrack = document.querySelector(".progress-track");
+  const progressBreakdown = document.getElementById("progress-breakdown");
   const dateFormat = new Intl.DateTimeFormat("fr-FR", { day: "2-digit", month: "long", year: "numeric" });
   const favoritesStorageKey = "officier-watch:favorites:v1";
+  const readStorageKey = "officier-watch:read:v1";
+  const quizScoreStorageKey = "officier-watch:quiz-best:v1";
 
   let selectedRange = 30;
   let customDates = null;
   let selectedCategory = "";
   let showFavorites = false;
   let favoriteItems = loadFavorites();
+  let readArticleIds = loadReadArticleIds();
   let quizQuestions = [];
   let quizIndex = 0;
   let quizScore = 0;
+  let bestQuizScore = loadBestQuizScore();
+
+  function loadReadArticleIds() {
+    try {
+      const saved = JSON.parse(localStorage.getItem(readStorageKey) || "[]");
+      return new Set(Array.isArray(saved) ? saved.filter((id) => typeof id === "string") : []);
+    } catch {
+      return new Set();
+    }
+  }
+
+  function loadBestQuizScore() {
+    try {
+      const saved = JSON.parse(localStorage.getItem(quizScoreStorageKey) || "null");
+      return saved && Number.isInteger(saved.score) && Number.isInteger(saved.total)
+        ? saved
+        : null;
+    } catch {
+      return null;
+    }
+  }
 
   function loadFavorites() {
     try {
@@ -156,6 +193,27 @@
       sourceList.append(source);
     });
     if (sourceList.childElementCount) card.append(sourceList);
+
+    const readButton = document.createElement("button");
+    const isRead = readArticleIds.has(item.id);
+    readButton.className = `read-toggle${isRead ? " is-read" : ""}`;
+    readButton.type = "button";
+    readButton.setAttribute("aria-pressed", String(isRead));
+    readButton.textContent = isRead ? "✓ Révisée" : "Marquer comme révisée";
+    readButton.addEventListener("click", () => {
+      if (readArticleIds.has(item.id)) readArticleIds.delete(item.id);
+      else readArticleIds.add(item.id);
+      try {
+        localStorage.setItem(readStorageKey, JSON.stringify([...readArticleIds]));
+      } catch {
+        status.textContent = "Le navigateur n’a pas pu enregistrer ta progression.";
+      }
+      render(window.OFFICIER_WATCH_DATA);
+    });
+    const actions = document.createElement("div");
+    actions.className = "news-card-actions";
+    actions.append(readButton);
+    card.append(actions);
     return card;
   }
 
@@ -180,14 +238,129 @@
     return (item.category || "Actualité") === selectedCategory;
   }
 
+  function normalizeText(value) {
+    return String(value || "").normalize("NFD").replace(/[\u0300-\u036f]/g, "").toLocaleLowerCase("fr-FR");
+  }
+
   function searchMatches(item, query) {
     if (!query) return true;
     const searchable = [
       item.title, item.category, item.summary, item.whyItMatters, item.legalStatus,
       ...(Array.isArray(item.keyPoints) ? item.keyPoints : []),
       ...(Array.isArray(item.tags) ? item.tags : [])
-    ].filter(Boolean).join(" ").toLocaleLowerCase("fr-FR");
-    return searchable.includes(query);
+    ].filter(Boolean).join(" ");
+    return normalizeText(searchable).includes(normalizeText(query));
+  }
+
+  function makeSourceLink(title, url) {
+    const link = document.createElement("a");
+    link.className = "source-link";
+    link.href = url;
+    link.target = "_blank";
+    link.rel = "noopener noreferrer";
+    link.append(makeText("span", "source-dot", "↗"), makeText("span", "", title));
+    return link;
+  }
+
+  function renderLegalList(items) {
+    const legalItems = items.filter((item) => item.category === "Justice & droit" ||
+      (Array.isArray(item.tags) && item.tags.some((tag) => /loi|projet|justice|droit|parquet|pnat|pnaco|jirs|reforme|juridique/i.test(normalizeText(tag)))))
+      .sort((a, b) => b.publishedAt.localeCompare(a.publishedAt));
+    legalList.replaceChildren();
+    if (!legalItems.length) {
+      legalList.append(makeText("div", "empty-card", "Aucun texte ou statut juridique n’est encore renseigné dans l’archive."));
+      return;
+    }
+    legalItems.forEach((item) => {
+      const card = document.createElement("article");
+      card.className = "legal-card";
+      const heading = document.createElement("div");
+      heading.className = "legal-card-heading";
+      heading.append(makeText("span", "legal-category", item.category || "Droit"));
+      heading.append(makeText("time", "legal-date", safeDate(item.publishedAt)));
+      card.append(heading, makeText("h3", "", item.title));
+      card.append(makeText("p", "legal-card-status", item.legalStatus || "Actualité juridique — consulte la source pour le statut détaillé."));
+      card.append(makeText("p", "legal-card-summary", item.summary));
+      card.append(makeSourceLink(item.sourceTitle, item.sourceUrl));
+      legalList.append(card);
+    });
+  }
+
+  function renderLibrary(items) {
+    const query = normalizeText(librarySearch.value.trim());
+    const matches = items.filter((item) => searchMatches(item, query));
+    libraryResultCount.textContent = `${matches.length} / ${items.length}`;
+    libraryList.replaceChildren();
+    if (!matches.length) {
+      libraryList.append(makeText("div", "empty-card", items.length
+        ? "Aucun contenu ne correspond à ta recherche. Essaie un autre mot-clé ou un tag."
+        : "L’archive est vide pour le moment."));
+      return;
+    }
+    matches.sort((a, b) => b.publishedAt.localeCompare(a.publishedAt));
+    matches.forEach((item) => libraryList.append(makeCard(item)));
+  }
+
+  function renderProgress(items) {
+    const studied = items.filter((item) => readArticleIds.has(item.id));
+    const percentage = items.length ? Math.round((studied.length / items.length) * 100) : 0;
+    readCount.textContent = `${studied.length} / ${items.length}`;
+    progressSummary.textContent = items.length
+      ? `${percentage} % de l’archive marquée comme révisée. Cette progression est enregistrée dans ce navigateur.`
+      : "Aucune actualité disponible pour calculer la progression.";
+    progressBar.style.width = `${percentage}%`;
+    progressTrack.setAttribute("aria-valuenow", String(percentage));
+    bestQuizScoreElement.textContent = bestQuizScore ? `${bestQuizScore.score} / ${bestQuizScore.total}` : "—";
+    progressBreakdown.replaceChildren();
+
+    const categories = [...new Set(items.map((item) => item.category || "Actualité"))].sort((a, b) => a.localeCompare(b, "fr"));
+    categories.forEach((category) => {
+      const categoryItems = items.filter((item) => (item.category || "Actualité") === category);
+      const categoryRead = categoryItems.filter((item) => readArticleIds.has(item.id)).length;
+      const row = document.createElement("div");
+      row.className = "progress-category";
+      row.append(makeText("span", "", category));
+      row.append(makeText("strong", "", `${categoryRead} / ${categoryItems.length}`));
+      progressBreakdown.append(row);
+    });
+  }
+
+  function answerCopilot(items, query) {
+    copilotResponse.replaceChildren();
+    const terms = normalizeText(query).split(/\s+/).filter((term) => term.length > 1);
+    if (!terms.length) {
+      copilotResponse.append(makeText("p", "tool-hint", "Entre un thème ou une notion pour chercher dans l’archive."));
+      return;
+    }
+    const results = items.map((item) => {
+      const fields = [item.title, item.category, item.summary, item.whyItMatters, item.legalStatus,
+        ...(Array.isArray(item.keyPoints) ? item.keyPoints : []),
+        ...(Array.isArray(item.tags) ? item.tags : [])].filter(Boolean).map(normalizeText);
+      const score = terms.reduce((total, term) => total + fields.reduce((sum, field, index) => {
+        if (!field.includes(term)) return sum;
+        return sum + (index === 0 ? 3 : index <= 2 ? 2 : 1);
+      }, 0), 0);
+      return { item, score };
+    }).filter((result) => result.score > 0).sort((a, b) => b.score - a.score || b.item.publishedAt.localeCompare(a.item.publishedAt)).slice(0, 5);
+
+    if (!results.length) {
+      copilotResponse.append(makeText("p", "tool-hint", "Je n’ai pas trouvé de réponse dans l’archive actuelle. Essaie un autre mot-clé ; le copilote ne complète pas les informations manquantes par supposition."));
+      return;
+    }
+    copilotResponse.append(makeText("p", "copilot-result-intro", `${results.length} source${results.length === 1 ? "" : "s"} de la veille correspondent à « ${query} » :`));
+    const resultList = document.createElement("div");
+    resultList.className = "copilot-results";
+    results.forEach(({ item }) => {
+      const card = document.createElement("article");
+      card.className = "copilot-result";
+      card.append(makeText("span", "news-date", `${item.category || "Actualité"} · ${safeDate(item.publishedAt)}`));
+      card.append(makeText("h4", "", item.title));
+      card.append(makeText("p", "", item.summary));
+      if (item.whyItMatters) card.append(makeText("p", "copilot-relevance", item.whyItMatters));
+      card.append(makeSourceLink(item.sourceTitle, item.sourceUrl));
+      resultList.append(card);
+    });
+    copilotResponse.append(resultList);
   }
 
   function renderCategoryTags(items) {
@@ -283,6 +456,17 @@
   }
 
   function renderQuizResult() {
+    const result = { score: quizScore, total: quizQuestions.length };
+    const previousRatio = bestQuizScore ? bestQuizScore.score / bestQuizScore.total : -1;
+    const currentRatio = result.total ? result.score / result.total : 0;
+    if (!bestQuizScore || currentRatio > previousRatio) {
+      bestQuizScore = result;
+      try {
+        localStorage.setItem(quizScoreStorageKey, JSON.stringify(bestQuizScore));
+      } catch {
+        // Le résultat de cette partie reste visible même si le navigateur refuse son stockage.
+      }
+    }
     quizProgress.textContent = "Quiz terminé";
     quizQuestion.textContent = `Ton résultat : ${quizScore} / ${quizQuestions.length}`;
     quizAnswers.replaceChildren();
@@ -292,6 +476,7 @@
     quizNext.hidden = true;
     quizIntro.hidden = false;
     quizStart.textContent = "Recommencer le quiz →";
+    renderProgress(window.OFFICIER_WATCH_DATA?.items?.filter(validItem) || []);
   }
 
   function render(data) {
@@ -300,6 +485,9 @@
     renderCategoryTags(allItems);
     updateFavoriteControls();
     updateQuizAvailability(allItems);
+    renderLegalList(allItems);
+    renderLibrary(allItems);
+    renderProgress(allItems);
 
     const { start, end, label } = getDateRange();
     const query = searchInput.value.trim().toLocaleLowerCase("fr-FR");
@@ -404,6 +592,18 @@
       updateFavoriteControls();
       render(window.OFFICIER_WATCH_DATA);
     });
+  });
+  copilotForm.addEventListener("submit", (event) => {
+    event.preventDefault();
+    answerCopilot(Array.isArray(window.OFFICIER_WATCH_DATA?.items)
+      ? window.OFFICIER_WATCH_DATA.items.filter(validItem)
+      : [], copilotQuery.value.trim());
+  });
+  librarySearch.addEventListener("input", () => {
+    const items = Array.isArray(window.OFFICIER_WATCH_DATA?.items)
+      ? window.OFFICIER_WATCH_DATA.items.filter(validItem)
+      : [];
+    renderLibrary(items);
   });
   quizStart.addEventListener("click", startQuiz);
   quizNext.addEventListener("click", () => {
