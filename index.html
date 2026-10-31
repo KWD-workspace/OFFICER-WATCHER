@@ -100,6 +100,14 @@
                 <div class="quiz-answers" id="quiz-answers"></div>
                 <p class="quiz-feedback" id="quiz-feedback" aria-live="polite"></p>
                 <button class="quiz-button" id="quiz-next" type="button" hidden>Question suivante <span>→</span></button>
+                <div class="quiz-result" id="quiz-result" hidden>
+                  <div class="quiz-result-score" id="quiz-result-score"></div>
+                  <div class="quiz-review-grid">
+                    <section class="quiz-review-card success"><h4>Ce que tu as réussi</h4><p id="quiz-success-copy"></p><ul id="quiz-success-list"></ul></section>
+                    <section class="quiz-review-card revise"><h4>À retravailler</h4><p id="quiz-revise-copy"></p><ul id="quiz-revise-list"></ul></section>
+                  </div>
+                  <button class="quiz-button" id="quiz-restart" type="button">Refaire le quiz <span>↻</span></button>
+                </div>
               </div>
             </div>
           </section>
