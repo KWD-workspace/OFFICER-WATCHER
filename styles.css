@@ -30,6 +30,8 @@
 .favorite-button.is-favorite{border-color:#eee0bd;background:#fbf5e7;color:#8f6c3c}
 .news-item-tags{display:flex;flex-wrap:wrap;gap:5px;margin:0 0 10px}
 .news-item-tag{border-color:transparent;background:#f5f4f8;padding:4px 7px;color:#777184}
+.nav-count{display:inline-grid;place-items:center;min-width:18px;height:18px;margin-left:auto;padding:0 4px;border-radius:99px;background:#f0eefb;color:#6559bb;font-size:8px;font-weight:700;font-variant-numeric:tabular-nums}
+.favorites-nav-link.selected .nav-count{background:#fff;color:#51459c}
 .quiz-card{border:1px solid var(--line);border-radius:11px;background:#fff;padding:19px}
 .quiz-intro{display:flex;align-items:center;justify-content:space-between;gap:20px}
 .quiz-intro h3{margin:0 0 5px;font:700 12px var(--serif)}
@@ -46,4 +48,4 @@
 .quiz-answer.is-correct{border-color:#a9d4bd;background:#eef8f1;color:#397455}
 .quiz-answer.is-wrong{border-color:#e5b5b0;background:#fff2f0;color:#9b5149}
 .quiz-feedback{min-height:16px;margin:10px 0;color:#6b628e;font-size:10px;line-height:1.5}
-@media(max-width:650px){.news-tools{align-items:stretch;flex-direction:column}.search-field{max-width:none;min-height:38px}.favorites-toggle{align-self:flex-start}.quiz-intro{align-items:flex-start;flex-direction:column}.quiz-card{padding:15px}.quiz-answers{grid-template-columns:1fr}.quiz-answer{min-height:40px}}
+@media(max-width:650px){.news-tools{align-items:stretch;flex-direction:column}.search-field{max-width:none;min-height:38px}.favorites-toggle{align-self:flex-start}.quiz-intro{align-items:flex-start;flex-direction:column}.quiz-card{padding:15px}.quiz-answers{grid-template-columns:1fr}.quiz-answer{min-height:40px}.brand{flex:1}.main-nav{display:contents}.main-nav .nav-link{display:none}.main-nav .favorites-nav-link{display:flex;height:33px;flex:none;gap:6px;padding:0 9px;border:1px solid #e8e7ee;border-radius:8px;background:#fff;font-size:10px}.main-nav .favorites-nav-link.selected{background:#f0eefb;border-color:#dedaf2}.main-nav .favorites-nav-link .nav-icon{width:auto;font-size:13px}.main-nav .favorites-nav-link .nav-count{min-width:17px;height:17px}}
