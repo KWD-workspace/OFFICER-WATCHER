@@ -49,3 +49,51 @@
 .quiz-answer.is-wrong{border-color:#e5b5b0;background:#fff2f0;color:#9b5149}
 .quiz-feedback{min-height:16px;margin:10px 0;color:#6b628e;font-size:10px;line-height:1.5}
 @media(max-width:650px){.news-tools{align-items:stretch;flex-direction:column}.search-field{max-width:none;min-height:38px}.favorites-toggle{align-self:flex-start}.quiz-intro{align-items:flex-start;flex-direction:column}.quiz-card{padding:15px}.quiz-answers{grid-template-columns:1fr}.quiz-answer{min-height:40px}.brand{flex:1}.main-nav{display:contents}.main-nav .nav-link{display:none}.main-nav .favorites-nav-link{display:flex;height:33px;flex:none;gap:6px;padding:0 9px;border:1px solid #e8e7ee;border-radius:8px;background:#fff;font-size:10px}.main-nav .favorites-nav-link.selected{background:#f0eefb;border-color:#dedaf2}.main-nav .favorites-nav-link .nav-icon{width:auto;font-size:13px}.main-nav .favorites-nav-link .nav-count{min-width:17px;height:17px}}
+
+.copilot-panel{display:grid;gap:14px;border:1px solid var(--line);border-radius:11px;background:#fff;padding:17px}
+.copilot-heading{display:flex;align-items:center;gap:11px}
+.copilot-heading h3{margin:0 0 4px;font:700 12px var(--serif)}
+.copilot-heading p,.section-description{margin:0;color:#858996;font-size:10px;line-height:1.6}
+.tool-search-form{display:flex;gap:8px}
+.tool-search-field,.library-search{display:flex;align-items:center;gap:8px;min-height:38px;flex:1;border:1px solid #e8e7ee;border-radius:8px;background:#fff;padding:0 11px;color:#777398}
+.tool-search-field>span,.library-search>span:first-child{font-size:18px;line-height:1}
+.tool-search-field input,.library-search input{width:100%;min-width:0;border:0;outline:0;background:transparent;color:var(--ink);font:10px var(--sans)}
+.tool-search-field input::placeholder,.library-search input::placeholder{color:#a0a2ad}
+.tool-action-button{display:inline-flex;align-items:center;justify-content:center;gap:11px;min-height:38px;border:1px solid #dedbed;border-radius:8px;background:#6559bb;padding:0 12px;color:#fff;font:600 9px var(--sans);cursor:pointer}
+.tool-action-button:hover{background:#5145a5}
+.copilot-response{min-height:20px}
+.tool-hint{margin:0;color:#9296a2;font-size:10px;line-height:1.6}
+.copilot-result-intro{margin:0 0 9px;color:#747988;font-size:10px}
+.copilot-results{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:8px}
+.copilot-result{border:1px solid var(--line);border-radius:9px;padding:12px}
+.copilot-result h4{margin:6px 0;font:700 10px/1.5 var(--serif)}
+.copilot-result p{margin:0 0 7px;color:#777c89;font-size:9px;line-height:1.55}
+.copilot-result .copilot-relevance{color:#8a8d98}
+.legal-list{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:9px}
+.legal-card{border:1px solid var(--line);border-radius:10px;background:#fff;padding:13px}
+.legal-card-heading{display:flex;align-items:center;justify-content:space-between;gap:9px}
+.legal-category{border-radius:5px;background:#f5f3fa;padding:5px 7px;color:#7065a5;font-size:8px;font-weight:700}
+.legal-date{color:#969aa5;font-size:9px}
+.legal-card h3{margin:9px 0 6px;font:700 11px/1.5 var(--serif)}
+.legal-card-status{margin:0 0 7px;border-left:2px solid #a69bdc;background:#f7f5fb;padding:6px 8px;color:#6f6598;font-size:9px;line-height:1.5}
+.legal-card-summary{margin:0 0 8px;color:#777c89;font-size:9px;line-height:1.6}
+.section-description{margin:-4px 0 11px}
+.library-search{width:100%;margin-bottom:10px}
+.library-result-count{flex:none;color:#9296a2;font-size:9px;font-variant-numeric:tabular-nums}
+.library-list{display:grid;gap:8px}
+.news-card-actions{display:flex;justify-content:flex-end;margin-top:9px}
+.read-toggle{min-height:27px;border:1px solid #e8e7ee;border-radius:7px;background:#fff;padding:5px 9px;color:#737887;font:600 8px var(--sans);cursor:pointer}
+.read-toggle:hover,.read-toggle.is-read{border-color:#cce1d5;background:#eff7f2;color:#4e8067}
+.read-toggle:focus-visible,.tool-action-button:focus-visible{outline:2px solid #7468c4;outline-offset:2px}
+.progress-dashboard{align-items:center}
+.progress-copy{flex:1}
+.progress-track{height:7px;width:100%;margin-top:12px;overflow:hidden;border-radius:99px;background:#f0eef5}
+.progress-track span{display:block;height:100%;width:0;border-radius:inherit;background:linear-gradient(90deg,#8175d2,#5a9b7b);transition:width .25s}
+.progress-stats{display:flex;gap:18px}
+.progress-stats>div{display:grid;gap:3px;min-width:75px;text-align:center}
+.progress-stats strong{color:#50468d;font:700 16px var(--serif)}
+.progress-stats span{color:#9296a2;font-size:8px}
+.progress-breakdown{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:7px;margin-top:8px}
+.progress-category{display:flex;align-items:center;justify-content:space-between;gap:9px;border:1px solid var(--line);border-radius:8px;background:#fff;padding:9px 10px;color:#7b7f8c;font-size:9px}
+.progress-category strong{color:#6257a8;font-size:9px;font-variant-numeric:tabular-nums}
+@media(max-width:650px){.tool-search-form{align-items:stretch;flex-direction:column}.copilot-results,.legal-list{grid-template-columns:1fr}.progress-dashboard{align-items:stretch;flex-direction:column}.progress-stats{justify-content:flex-start}.progress-breakdown{grid-template-columns:1fr 1fr}}
