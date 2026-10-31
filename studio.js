@@ -12,6 +12,8 @@
   const categoryTags = document.getElementById("category-tags");
   const favoritesToggle = document.getElementById("favorites-toggle");
   const favoriteCount = document.getElementById("favorite-count");
+  const favoritesNav = document.getElementById("favorites-nav");
+  const sidebarFavoriteCount = document.getElementById("sidebar-favorite-count");
   const quizSummary = document.getElementById("quiz-summary");
   const quizIntro = document.getElementById("quiz-intro");
   const quizPlay = document.getElementById("quiz-play");
@@ -54,9 +56,17 @@
 
   function updateFavoriteControls() {
     favoriteCount.textContent = String(favoriteItems.size);
+    sidebarFavoriteCount.textContent = String(favoriteItems.size);
     favoritesToggle.setAttribute("aria-pressed", String(showFavorites));
     favoritesToggle.classList.toggle("is-active", showFavorites);
     favoritesToggle.querySelector("[aria-hidden]").textContent = showFavorites ? "★" : "☆";
+    const wasFavoritesActive = favoritesNav.classList.contains("selected");
+    favoritesNav.classList.toggle("selected", showFavorites);
+    if (showFavorites) {
+      document.querySelectorAll(".main-nav .nav-link").forEach((link) => link.classList.toggle("selected", link === favoritesNav));
+    } else if (wasFavoritesActive) {
+      document.querySelector('.main-nav .nav-link[href="#veille"]')?.classList.add("selected");
+    }
   }
 
   function safeDate(value) {
@@ -380,6 +390,20 @@
   favoritesToggle.addEventListener("click", () => {
     showFavorites = !showFavorites;
     render(window.OFFICIER_WATCH_DATA);
+  });
+  favoritesNav.addEventListener("click", (event) => {
+    event.preventDefault();
+    showFavorites = true;
+    render(window.OFFICIER_WATCH_DATA);
+    document.getElementById("veille").scrollIntoView({ behavior: "smooth" });
+  });
+  document.querySelectorAll(".main-nav .nav-link:not(#favorites-nav)").forEach((link) => {
+    link.addEventListener("click", () => {
+      showFavorites = false;
+      document.querySelectorAll(".main-nav .nav-link").forEach((candidate) => candidate.classList.toggle("selected", candidate === link));
+      updateFavoriteControls();
+      render(window.OFFICIER_WATCH_DATA);
+    });
   });
   quizStart.addEventListener("click", startQuiz);
   quizNext.addEventListener("click", () => {
