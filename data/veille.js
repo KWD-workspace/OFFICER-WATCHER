@@ -1,10 +1,36 @@
 /* Archive de veille relue et sourcée. La tâche hebdomadaire conserve les 365 derniers jours. */
 window.OFFICIER_WATCH_DATA = {
   schemaVersion: 1,
-  updatedAt: "2026-10-31T01:55:00+02:00",
+  updatedAt: "2026-10-31T02:13:00+02:00",
   periodStart: "2026-10-24",
   periodEnd: "2026-10-31",
   items: [
+    {
+      id: "imprescriptibilite-crimes-sexuels-mineurs-senat-2026-10-28",
+      title: "Crimes sexuels sur mineurs : le Sénat rétablit l’imprescriptibilité dans le projet de loi",
+      publishedAt: "2026-10-28",
+      eventDate: "2026-10-28",
+      category: "Justice & droit",
+      tags: ["imprescriptibilité", "prescription", "crimes sexuels", "mineurs", "article 11 bis A", "projet de loi protection des enfants"],
+      priority: 1,
+      summary: "Le Sénat a adopté le 28 octobre, par 252 voix contre 80, des amendements identiques rétablissant l’article 11 bis A du projet de loi relatif à la protection des enfants. La disposition vise à rendre imprescriptibles les crimes sexuels commis sur des mineurs.",
+      whyItMatters: "Le vote est majeur pour le débat sur la prescription des violences sexuelles sur mineurs. Il faut toutefois distinguer l’adoption d’un amendement en première lecture de la promulgation d’une loi : au 31 octobre 2026, le projet poursuit encore son examen parlementaire.",
+      keyPoints: [
+        "Les amendements identiques ont été adoptés au Sénat par 252 voix pour et 80 contre (scrutin public n° 43).",
+        "Le vote rétablit l’article 11 bis A dans le projet de loi relatif à la protection des enfants.",
+        "Au 31 octobre 2026, la mesure n’est pas encore une loi promulguée ; la discussion du projet au Sénat se poursuit."
+      ],
+      sourceTitle: "Sénat — compte rendu officiel du 28 octobre 2026, scrutin public n° 43",
+      sourceUrl: "https://www.senat.fr/cra/s20261028/s20261028_mono.html",
+      sources: [
+        { title: "Sénat — dossier législatif du projet de loi relatif à la protection des enfants", url: "https://www.senat.fr/dossier-legislatif/pjl25-911.html" },
+        { title: "Sénat — amendement de rétablissement de l’article 11 bis A", url: "https://www.senat.fr/enseance/2026-2027/89/Amdt_273.html" }
+      ],
+      legalReferences: [
+        { title: "Projet de loi relatif à la protection des enfants, article 11 bis A", reference: "Article 11 bis A — imprescriptibilité des crimes sexuels commis sur des mineurs", url: "https://www.senat.fr/dossier-legislatif/pjl25-911.html" }
+      ],
+      legalStatus: "Amendement adopté en première lecture au Sénat le 28 octobre 2026 — projet de loi en cours d’examen, non promulgué à cette date"
+    },
     {
       id: "mobilisation-2026-10-24",
       title: "Mobilisation du 24 octobre : bilan provisoire du ministère",
