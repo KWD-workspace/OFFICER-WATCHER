@@ -2,6 +2,7 @@
   "use strict";
 
   const list = document.getElementById("weekly-news");
+  const pagination = document.getElementById("news-pagination");
   const status = document.getElementById("sync-status");
   const syncButton = document.getElementById("sync-button");
   const rangeButtons = [...document.querySelectorAll(".range-button")];
@@ -75,6 +76,9 @@
   let selectedRange = 30;
   let customDates = null;
   let selectedCategory = "";
+  let selectedTag = "";
+  let currentNewsPage = 1;
+  const newsPageSize = 8;
   let showFavorites = false;
   let favoriteItems = loadFavorites();
   let readArticleIds = loadReadArticleIds();
@@ -202,7 +206,18 @@
     if (Array.isArray(item.tags) && item.tags.length) {
       const tags = document.createElement("div");
       tags.className = "news-item-tags";
-      item.tags.slice(0, 6).forEach((tag) => tags.append(makeText("span", "news-item-tag", tag)));
+      item.tags.slice(0, 6).forEach((tag) => {
+        const button = makeText("button", "news-item-tag", tag);
+        button.type = "button";
+        button.setAttribute("aria-label", `Filtrer par le tag ${tag}`);
+        button.addEventListener("click", () => {
+          selectedTag = tag;
+          currentNewsPage = 1;
+          render(window.OFFICIER_WATCH_DATA);
+          document.getElementById("veille").scrollIntoView({ behavior: "smooth", block: "start" });
+        });
+        tags.append(button);
+      });
       card.append(tags);
     }
 
@@ -538,8 +553,8 @@
     if (selectedCategory && !categories.includes(selectedCategory)) selectedCategory = "";
     categoryTags.replaceChildren();
 
-    const choices = [{ label: "Toutes", value: "" }, ...categories.map((category) => ({ label: category, value: category }))];
-    choices.forEach(({ label, value }) => {
+    const categoryChoices = [{ label: "Toutes", value: "" }, ...categories.map((category) => ({ label: category, value: category }))];
+    categoryChoices.forEach(({ label, value }) => {
       const button = document.createElement("button");
       button.type = "button";
       button.className = `category-tag${selectedCategory === value ? " is-active" : ""}`;
@@ -547,10 +562,73 @@
       button.setAttribute("aria-pressed", String(selectedCategory === value));
       button.addEventListener("click", () => {
         selectedCategory = value;
+        currentNewsPage = 1;
         render(window.OFFICIER_WATCH_DATA);
       });
       categoryTags.append(button);
     });
+
+    const tagCounts = new Map();
+    items.forEach((item) => (Array.isArray(item.tags) ? item.tags : []).forEach((tag) => {
+      tagCounts.set(tag, (tagCounts.get(tag) || 0) + 1);
+    }));
+    const popularTags = [...tagCounts.entries()].sort((a, b) => b[1] - a[1] || a[0].localeCompare(b[0], "fr")).slice(0, 12).map(([tag]) => tag);
+    if (selectedTag && !tagCounts.has(selectedTag)) selectedTag = "";
+    if (popularTags.length) {
+      const tagRow = document.createElement("div");
+      tagRow.className = "topic-tag-row";
+      tagRow.append(makeText("span", "topic-tag-label", "Sujets"));
+      [{ label: "Tous", value: "" }, ...popularTags.map((tag) => ({ label: `# ${tag}`, value: tag }))].forEach(({ label, value }) => {
+        const button = document.createElement("button");
+        button.type = "button";
+        button.className = `category-tag topic-tag${selectedTag === value ? " is-active" : ""}`;
+        button.textContent = label;
+        button.setAttribute("aria-pressed", String(selectedTag === value));
+        button.addEventListener("click", () => {
+          selectedTag = value;
+          currentNewsPage = 1;
+          render(window.OFFICIER_WATCH_DATA);
+        });
+        tagRow.append(button);
+      });
+      categoryTags.append(tagRow);
+    }
+  }
+
+  function renderNewsPagination(totalItems) {
+    pagination.replaceChildren();
+    const pageCount = Math.ceil(totalItems / newsPageSize);
+    if (pageCount <= 1) return;
+    const start = (currentNewsPage - 1) * newsPageSize + 1;
+    const end = Math.min(currentNewsPage * newsPageSize, totalItems);
+    const label = makeText("span", "pagination-summary", `${start}–${end} sur ${totalItems}`);
+    const controls = document.createElement("div");
+    controls.className = "pagination-controls";
+    const addButton = (text, page, disabled, current = false, labelText = text) => {
+      const button = document.createElement("button");
+      button.type = "button";
+      button.className = `page-button${current ? " is-current" : ""}`;
+      button.textContent = text;
+      button.disabled = disabled;
+      button.setAttribute("aria-label", labelText);
+      if (current) button.setAttribute("aria-current", "page");
+      button.addEventListener("click", () => {
+        currentNewsPage = page;
+        render(window.OFFICIER_WATCH_DATA);
+        document.getElementById("veille").scrollIntoView({ behavior: "smooth", block: "start" });
+      });
+      controls.append(button);
+    };
+    addButton("‹", Math.max(1, currentNewsPage - 1), currentNewsPage === 1, false, "Page précédente");
+    for (let page = 1; page <= pageCount; page += 1) {
+      if (page === 1 || page === pageCount || Math.abs(page - currentNewsPage) <= 1) {
+        addButton(String(page), page, false, page === currentNewsPage, `Page ${page}`);
+      } else if (page === currentNewsPage - 2 || page === currentNewsPage + 2) {
+        controls.append(makeText("span", "pagination-ellipsis", "…"));
+      }
+    }
+    addButton("›", Math.min(pageCount, currentNewsPage + 1), currentNewsPage === pageCount, false, "Page suivante");
+    pagination.append(label, controls);
   }
 
   function buildQuizQuestions(items) {
@@ -697,6 +775,7 @@
   function render(data) {
     const allItems = Array.isArray(data?.items) ? data.items.filter(validItem) : [];
     list.replaceChildren();
+    pagination.replaceChildren();
     renderCategoryTags(allItems);
     updateFavoriteControls();
     updateQuizAvailability(allItems);
@@ -712,9 +791,12 @@
         const published = new Date(`${item.publishedAt}T12:00:00`);
         return !Number.isNaN(published.getTime()) && published >= start && published <= end;
       });
-    const items = dateItems.filter((item) => categoryMatches(item) && searchMatches(item, query));
+    const items = dateItems.filter((item) => categoryMatches(item) && (!selectedTag || item.tags?.includes(selectedTag)) && searchMatches(item, query));
+    const pageCount = Math.max(1, Math.ceil(items.length / newsPageSize));
+    currentNewsPage = Math.min(currentNewsPage, pageCount);
 
     if (!items.length) {
+      renderNewsPagination(0);
       const message = showFavorites
         ? "Aucun favori ne correspond à cette recherche. Les favoris restent enregistrés dans ce navigateur."
         : allItems.length
@@ -727,15 +809,17 @@
       return;
     }
 
-    items.sort((a, b) => (a.priority || 3) - (b.priority || 3) || b.publishedAt.localeCompare(a.publishedAt));
-    items.forEach((item) => list.append(makeCard(item)));
+    items.sort((a, b) => b.publishedAt.localeCompare(a.publishedAt));
+    const pageItems = items.slice((currentNewsPage - 1) * newsPageSize, currentNewsPage * newsPageSize);
+    pageItems.forEach((item) => list.append(makeCard(item)));
+    renderNewsPagination(items.length);
 
     const updated = data.updatedAt ? new Date(data.updatedAt) : null;
     const updatedText = updated && !Number.isNaN(updated.getTime())
       ? new Intl.DateTimeFormat("fr-FR", { day: "2-digit", month: "long", hour: "2-digit", minute: "2-digit" }).format(updated)
       : "date inconnue";
     const filterLabel = showFavorites ? "favoris" : label;
-    status.textContent = `${items.length} actualité${items.length === 1 ? "" : "s"} affichée${items.length === 1 ? "" : "s"} · ${allItems.length} dans l’archive · ${filterLabel} · synchronisée le ${updatedText}`;
+    status.textContent = `${items.length} actualité${items.length === 1 ? "" : "s"} trouvée${items.length === 1 ? "" : "s"} · page ${currentNewsPage}/${Math.max(1, Math.ceil(items.length / newsPageSize))} · ${allItems.length} dans l’archive · ${filterLabel} · synchronisée le ${updatedText}`;
   }
 
   function sync() {
@@ -765,6 +849,7 @@
     button.addEventListener("click", () => {
       selectedRange = Number(button.dataset.range) || 30;
       customDates = null;
+      currentNewsPage = 1;
       applyCustomRange.classList.remove("is-active");
       rangeButtons.forEach((candidate) => {
         const isActive = candidate === button;
@@ -781,6 +866,7 @@
       return;
     }
     customDates = { from: dateFrom.value, to: dateTo.value };
+    currentNewsPage = 1;
     applyCustomRange.classList.add("is-active");
     rangeButtons.forEach((candidate) => {
       candidate.classList.remove("is-active");
@@ -789,20 +875,23 @@
     render(window.OFFICIER_WATCH_DATA);
   });
 
-  searchInput.addEventListener("input", () => render(window.OFFICIER_WATCH_DATA));
+  searchInput.addEventListener("input", () => { currentNewsPage = 1; render(window.OFFICIER_WATCH_DATA); });
   favoritesToggle.addEventListener("click", () => {
     showFavorites = !showFavorites;
+    currentNewsPage = 1;
     render(window.OFFICIER_WATCH_DATA);
   });
   favoritesNav.addEventListener("click", (event) => {
     event.preventDefault();
     showFavorites = true;
+    currentNewsPage = 1;
     render(window.OFFICIER_WATCH_DATA);
     document.getElementById("veille").scrollIntoView({ behavior: "smooth" });
   });
   document.querySelectorAll(".main-nav .nav-link:not(#favorites-nav)").forEach((link) => {
     link.addEventListener("click", () => {
       showFavorites = false;
+      currentNewsPage = 1;
       document.querySelectorAll(".main-nav .nav-link").forEach((candidate) => candidate.classList.toggle("selected", candidate === link));
       updateFavoriteControls();
       render(window.OFFICIER_WATCH_DATA);
