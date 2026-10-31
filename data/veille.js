@@ -555,6 +555,104 @@ window.OFFICIER_WATCH_DATA = {
       sourceTitle: "Ministère de la Justice — entrée en fonction des premières UJPE",
       sourceUrl: "https://www.justice.gouv.fr/actualites/actualite/justice-mineurs-premieres-unites-judiciaires-priorite-educative-entrent-fonction",
       legalStatus: "Réforme entrée en vigueur le 1er septembre 2026"
+    },
+    ,{
+      id: "loi-securite-retention-attentats-2026-07-27",
+      title: "Sécurité et prévention des attentats : la loi sur la rétention administrative est promulguée",
+      publishedAt: "2026-07-28",
+      eventDate: "2026-07-27",
+      category: "Justice & droit",
+      tags: ["prévention attentats", "rétention administrative", "ordre public", "Légifrance", "Conseil constitutionnel"],
+      priority: 1,
+      summary: "La loi n° 2026-667 du 27 juillet 2026, publiée au Journal officiel le 28 juillet, porte sur la sécurité, la rétention administrative et la prévention des risques d’attentat. Le Conseil constitutionnel l’avait déclarée conforme avec réserve le 23 juillet.",
+      whyItMatters: "Ce texte articule prévention des attentats, police administrative et contrôle juridictionnel. Les mesures et réserves doivent être lues dans la loi et la décision constitutionnelle, article par article.",
+      keyPoints: [
+        "Promulgation le 27 juillet 2026 et publication au Journal officiel le 28 juillet.",
+        "Le Conseil constitutionnel a rendu une décision de conformité avec réserve le 23 juillet.",
+        "La loi prévoit notamment des dispositions relatives à la rétention administrative de certaines personnes présentant une menace particulière pour l’ordre public."
+      ],
+      sourceTitle: "Légifrance — loi n° 2026-667 du 27 juillet 2026",
+      sourceUrl: "https://www.legifrance.gouv.fr/loda/id/JORFTEXT000054496919/",
+      sources: [
+        { title: "Assemblée nationale — dossier législatif complet", url: "https://www.assemblee-nationale.fr/dyn/17/dossiers/retention_admin_prevention_attentats_17e" }
+      ],
+      legalStatus: "Loi promulguée ; certaines dispositions sont soumises à des conditions et réserves de constitutionnalité"
+    },
+    {
+      id: "decret-retention-2026-10-22",
+      title: "Rétention administrative : décret d’application publié au Journal officiel",
+      publishedAt: "2026-10-23",
+      eventDate: "2026-10-22",
+      category: "Justice & droit",
+      tags: ["rétention administrative", "décret", "séjour des étrangers", "application de la loi"],
+      priority: 1,
+      summary: "Le décret n° 2026-977 du 22 octobre 2026, publié au Journal officiel du 23 octobre, modifie le CESEDA et précise l’application de la loi n° 2026-667 du 27 juillet 2026 sur la rétention administrative de certains étrangers en situation irrégulière.",
+      whyItMatters: "Cette publication permet de suivre le passage d’une disposition législative à ses modalités réglementaires. Le détail doit être vérifié dans le décret lui-même.",
+      keyPoints: [
+        "Décret daté du 22 octobre et publié le 23 octobre 2026.",
+        "Il modifie le code de l’entrée et du séjour des étrangers et du droit d’asile.",
+        "Légifrance précise qu’il est pris pour l’application de la loi n° 2026-667."
+      ],
+      sourceTitle: "Légifrance — décret n° 2026-977 du 22 octobre 2026",
+      sourceUrl: "https://www.legifrance.gouv.fr/jorf/id/JORFTEXT000055008942",
+      legalStatus: "Décret publié au Journal officiel le 23 octobre 2026"
+    },
+    {
+      id: "ssmsi-bilan-annuel-delinquance-2025-2026-07-09",
+      title: "Bilan annuel du SSMSI : panorama complet de la délinquance enregistrée en 2025",
+      publishedAt: "2026-07-09",
+      eventDate: "2025-12-31",
+      category: "Statistiques & sécurité",
+      tags: ["SSMSI", "bilan annuel", "délinquance", "données territoriales", "statistiques"],
+      priority: 1,
+      summary: "Le SSMSI publie son bilan statistique 2025 et un atlas départemental. Les évolutions sont contrastées : les atteintes aux personnes et les infractions liées aux stupéfiants progressent, tandis que plusieurs catégories de vols diminuent. Le bilan inclut 18 indicateurs et des données territoriales ouvertes.",
+      whyItMatters: "C’est la référence annuelle pour présenter les tendances nationales et territoriales. Le SSMSI signale aussi une révision méthodologique d’octobre 2026 concernant les taux de plainte de l’enquête VRS : utiliser les séries actualisées pour ces taux.",
+      keyPoints: [
+        "Publication de la 10e édition annuelle, consacrée à 2025, le 9 juillet 2026.",
+        "Le SSMSI décrit une hausse de 5 % des violences physiques enregistrées et de 8 % des violences sexuelles ; les tentatives d’homicide progressent de 4 %.",
+        "Les données annuelles et l’atlas départemental sont disponibles en téléchargement ; les taux de plainte VRS ont été révisés en octobre 2026."
+      ],
+      sourceTitle: "SSMSI — Insécurité et délinquance en 2025 : bilan statistique et atlas départemental",
+      sourceUrl: "https://statistiques.interieur.gouv.fr/ssmsi/publications/insecurite-et-delinquance-en-2025-bilan-statistique-et-atlas-departemental",
+      legalStatus: "Publication statistique annuelle — données enregistrées par les services de sécurité intérieure"
+    },
+    {
+      id: "ssmsi-victimes-violences-2025-2026-02-27",
+      title: "Violences enregistrées en 2025 : hausse des victimes, dont les mineurs",
+      publishedAt: "2026-02-27",
+      eventDate: "2025-12-31",
+      category: "Statistiques & sécurité",
+      tags: ["violences sexuelles", "violences physiques", "mineurs", "victimes", "SSMSI"],
+      priority: 1,
+      summary: "Le SSMSI dénombre en 2025 environ 473 000 victimes de violences physiques et 132 300 victimes de violences sexuelles enregistrées par la police et la gendarmerie. Les violences physiques envers les mineurs progressent de 10 % ; 58 % des victimes de violences sexuelles enregistrées sont mineures.",
+      whyItMatters: "Cette publication aide à traiter des violences faites aux mineurs et de l’accueil des victimes. Ce sont des faits enregistrés, non une mesure exhaustive de toutes les violences commises ; la page signale aussi une révision de la méthode des taux de plainte en octobre 2026.",
+      keyPoints: [
+        "Publication du SSMSI datée du 27 février 2026, portant sur les faits enregistrés en 2025.",
+        "Les violences physiques enregistrées envers les mineurs progressent de 10 % en 2025.",
+        "Les violences sexuelles enregistrées progressent de 8 % et 58 % des victimes recensées sont mineures."
+      ],
+      sourceTitle: "SSMSI — victimes de violences physiques et sexuelles enregistrées en 2025",
+      sourceUrl: "https://statistiques.interieur.gouv.fr/ssmsi/publications/victimes-de-violences-physiques-et-sexuelles-enregistrees-en-hausse-en-2025-en",
+      legalStatus: "Publication statistique — données policières et gendarmiques enregistrées ; taux de plainte VRS révisés depuis octobre 2026"
+    },
+    {
+      id: "ssmsi-ete-statistique-2026-07-17",
+      title: "SSMSI : sept études thématiques réunies dans le dossier Un été statistique 2026",
+      publishedAt: "2026-07-17",
+      eventDate: "2026-07-17",
+      category: "Statistiques & sécurité",
+      tags: ["SSMSI", "violences sexuelles", "mineurs", "stupéfiants", "homicides", "cambriolages"],
+      priority: 2,
+      summary: "Le SSMSI publie un dossier thématique composé de sept études portant sur les cambriolages, les violences sexuelles, les infractions anti-LGBT, les stupéfiants, les mineurs victimes et mis en cause, les homicides et la délinquance dans les DROM.",
+      whyItMatters: "Ce dossier rassemble plusieurs sources officielles de fond utiles pour préparer des sujets de société et analyser les statistiques de sécurité intérieure. Chaque étude possède son propre périmètre et doit être consultée séparément.",
+      keyPoints: [
+        "Dossier publié le 17 juillet 2026 par le SSMSI.",
+        "Il donne accès à sept études thématiques distinctes.",
+        "Les publications détaillées sont accessibles sur la page source officielle."
+      ],
+      sourceTitle: "SSMSI — Un été statistique 2026",
+      sourceUrl: "https://statistiques.interieur.gouv.fr/ssmsi/publications/un-ete-statistique-2026",
+      legalStatus: "Ensemble de publications statistiques thématiques"
     }
   ]
 };
