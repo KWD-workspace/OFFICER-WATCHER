@@ -23,6 +23,13 @@
   const quizAnswers = document.getElementById("quiz-answers");
   const quizFeedback = document.getElementById("quiz-feedback");
   const quizNext = document.getElementById("quiz-next");
+  const quizResult = document.getElementById("quiz-result");
+  const quizResultScore = document.getElementById("quiz-result-score");
+  const quizSuccessCopy = document.getElementById("quiz-success-copy");
+  const quizSuccessList = document.getElementById("quiz-success-list");
+  const quizReviseCopy = document.getElementById("quiz-revise-copy");
+  const quizReviseList = document.getElementById("quiz-revise-list");
+  const quizRestart = document.getElementById("quiz-restart");
   const copilotForm = document.getElementById("copilot-form");
   const copilotQuery = document.getElementById("copilot-query");
   const copilotResponse = document.getElementById("copilot-response");
@@ -50,6 +57,7 @@
   let quizQuestions = [];
   let quizIndex = 0;
   let quizScore = 0;
+  let quizResponses = [];
   let bestQuizScore = loadBestQuizScore();
 
   function loadReadArticleIds() {
@@ -395,7 +403,7 @@
         .filter((fact) => fact.itemId !== item.id && fact.point !== correct)
         .map((fact) => fact.point))];
       const choices = shuffle([correct, ...shuffle(distractors).slice(0, 3)]);
-      return { title: item.title, correct, choices };
+      return { title: item.title, category: item.category || "Actualité", tags: Array.isArray(item.tags) ? item.tags : [], correct, choices };
     });
   }
 
@@ -418,6 +426,10 @@
 
   function showQuizQuestion() {
     const question = quizQuestions[quizIndex];
+    quizQuestion.hidden = false;
+    quizAnswers.hidden = false;
+    quizFeedback.hidden = false;
+    quizResult.hidden = true;
     quizProgress.textContent = `Question ${quizIndex + 1} sur ${quizQuestions.length} · ${quizScore} bonne${quizScore === 1 ? "" : "s"} réponse${quizScore === 1 ? "" : "s"}`;
     quizQuestion.textContent = `Pour « ${question.title} », quel élément figure dans la veille ?`;
     quizAnswers.replaceChildren();
@@ -432,6 +444,7 @@
         [...quizAnswers.querySelectorAll("button")].forEach((candidate) => { candidate.disabled = true; });
         const isCorrect = choice === question.correct;
         if (isCorrect) quizScore += 1;
+        quizResponses.push({ title: question.title, category: question.category, tags: question.tags, correct: isCorrect });
         button.classList.add(isCorrect ? "is-correct" : "is-wrong");
         if (!isCorrect) {
           [...quizAnswers.querySelectorAll("button")].find((candidate) => candidate.textContent === question.correct)?.classList.add("is-correct");
@@ -450,9 +463,24 @@
     quizQuestions = shuffle(quizQuestions);
     quizIndex = 0;
     quizScore = 0;
+    quizResponses = [];
     quizIntro.hidden = true;
     quizPlay.hidden = false;
+    quizQuestion.hidden = false;
+    quizAnswers.hidden = false;
+    quizFeedback.hidden = false;
+    quizResult.hidden = true;
     showQuizQuestion();
+  }
+
+  function fillReviewList(element, entries, emptyMessage, limit) {
+    element.replaceChildren();
+    if (!entries.length) {
+      element.append(makeText("li", "", emptyMessage));
+      return;
+    }
+    entries.slice(0, limit).forEach((entry) => element.append(makeText("li", "", entry.title)));
+    if (entries.length > limit) element.append(makeText("li", "more", `et ${entries.length - limit} autre${entries.length - limit === 1 ? "" : "s"} actualité${entries.length - limit === 1 ? "" : "s"}`));
   }
 
   function renderQuizResult() {
@@ -467,15 +495,32 @@
         // Le résultat de cette partie reste visible même si le navigateur refuse son stockage.
       }
     }
+    const successes = quizResponses.filter((response) => response.correct);
+    const toReview = quizResponses.filter((response) => !response.correct);
+    const topicCounts = (entries) => {
+      const counts = new Map();
+      entries.forEach((entry) => (entry.tags.length ? entry.tags : [entry.category]).forEach((tag) => counts.set(tag, (counts.get(tag) || 0) + 1)));
+      return [...counts.entries()].sort((a, b) => b[1] - a[1]).slice(0, 3).map(([tag]) => tag);
+    };
+    const successTopics = topicCounts(successes);
+    const reviewTopics = topicCounts(toReview);
+
     quizProgress.textContent = "Quiz terminé";
-    quizQuestion.textContent = `Ton résultat : ${quizScore} / ${quizQuestions.length}`;
-    quizAnswers.replaceChildren();
-    quizFeedback.textContent = quizScore === quizQuestions.length
-      ? "Parfait, tu as retenu tous les points clés de la veille !"
-      : "Tu peux refaire le quiz ou consulter les actualités pour revoir les points clés.";
+    quizQuestion.hidden = true;
+    quizAnswers.hidden = true;
+    quizFeedback.hidden = true;
     quizNext.hidden = true;
-    quizIntro.hidden = false;
-    quizStart.textContent = "Recommencer le quiz →";
+    quizIntro.hidden = true;
+    quizResult.hidden = false;
+    quizResultScore.textContent = `${quizScore} / ${quizQuestions.length} bonnes réponses`;
+    quizSuccessCopy.textContent = successes.length
+      ? `Tu as réussi ${successes.length} question${successes.length === 1 ? "" : "s"}${successTopics.length ? `, surtout sur ${successTopics.join(", ")}` : ""}.`
+      : "Tu n’as pas encore trouvé tes repères dans cette série. Reprends quelques actualités puis réessaie.";
+    quizReviseCopy.textContent = toReview.length
+      ? `${toReview.length} question${toReview.length === 1 ? "" : "s"} à retravailler${reviewTopics.length ? `, notamment : ${reviewTopics.join(", ")}` : ""}.`
+      : "Tout est juste : rien à retravailler pour cette série !";
+    fillReviewList(quizSuccessList, successes, "Recommence le quiz pour repérer tes points forts.", 3);
+    fillReviewList(quizReviseList, toReview, "Bravo, tu as tout réussi !", 4);
     renderProgress(window.OFFICIER_WATCH_DATA?.items?.filter(validItem) || []);
   }
 
@@ -606,6 +651,7 @@
     renderLibrary(items);
   });
   quizStart.addEventListener("click", startQuiz);
+  quizRestart.addEventListener("click", startQuiz);
   quizNext.addEventListener("click", () => {
     quizIndex += 1;
     if (quizIndex >= quizQuestions.length) renderQuizResult();
