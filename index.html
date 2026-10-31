@@ -115,22 +115,30 @@
 
           <section class="content-section" id="copilote">
             <div class="section-title-row"><div><div class="section-kicker">COMPRENDRE ET APPROFONDIR</div><h2>Copilote</h2></div></div>
-            <div class="copilot-card"><div class="copilot-badge">✳</div><div class="copilot-copy"><h3>Une question sur l’actualité ?</h3><p>Le copilote s’appuiera sur les contenus et les sources de ton studio.</p></div><span class="soon-chip">Disponible plus tard</span></div>
+            <div class="copilot-panel">
+              <div class="copilot-heading"><div class="copilot-badge">✳</div><div><h3>Interroger ta veille</h3><p>Le copilote retrouve les actualités pertinentes dans l’archive et affiche leurs sources.</p></div></div>
+              <form class="tool-search-form" id="copilot-form"><label class="tool-search-field"><span aria-hidden="true">⌕</span><input id="copilot-query" type="search" placeholder="Ex. : loi RIPOST, PNACO, maintien de l’ordre…" aria-label="Poser une question sur la veille" required></label><button class="tool-action-button" type="submit">Chercher <span>→</span></button></form>
+              <div class="copilot-response" id="copilot-response" aria-live="polite"><p class="tool-hint">Les réponses s’appuient sur les faits et les sources déjà présents dans ta veille.</p></div>
+            </div>
           </section>
 
           <section class="content-section" id="lois">
             <div class="section-title-row"><div><div class="section-kicker">SUIVRE LE DROIT EN VIGUEUR</div><h2>Lois & réformes</h2></div></div>
-            <div class="empty-card compact"><div class="empty-symbol law">§</div><div><h3>Les textes seront présentés avec leur statut</h3><p>Projet, texte adopté, loi promulguée ou mesure entrée en vigueur : chaque étape sera distinguée.</p></div></div>
+            <p class="section-description">Textes, projets et instructions juridiques repérés dans l’archive, avec leur statut indiqué par la source.</p>
+            <div class="legal-list" id="legal-list" aria-live="polite"></div>
           </section>
 
           <section class="content-section" id="bibliotheque">
             <div class="section-title-row"><div><div class="section-kicker">RETROUVER TES CONTENUS</div><h2>Bibliothèque</h2></div></div>
-            <div class="library-bar"><span class="search-symbol">⌕</span><span>La recherche dans les actualités, lois, chiffres et notions sera disponible ici.</span><span class="soon-chip">À venir</span></div>
+            <p class="section-description">Recherche dans les titres, résumés, points clés, catégories, tags et statuts juridiques de toute l’archive.</p>
+            <label class="library-search"><span aria-hidden="true">⌕</span><input id="library-search" type="search" placeholder="Rechercher dans toute la bibliothèque…" aria-label="Rechercher dans la bibliothèque"><span class="library-result-count" id="library-result-count"></span></label>
+            <div class="library-list" id="library-list" aria-live="polite"></div>
           </section>
 
           <section class="content-section" id="progression">
             <div class="section-title-row"><div><div class="section-kicker">GARDER LE CAP</div><h2>Progression</h2></div></div>
-            <div class="progress-card"><div class="progress-copy"><h3>Un parcours qui avance avec toi</h3><p>Les thèmes étudiés et ceux à revoir seront regroupés ici. Cet indicateur t’aidera à organiser tes révisions ; il ne prédit pas le résultat au concours.</p></div><div class="progress-orb"><span>OW</span></div></div>
+            <div class="progress-card progress-dashboard"><div class="progress-copy"><h3>Un parcours qui avance avec toi</h3><p id="progress-summary">Marque une actualité comme révisée pour suivre ton avancée.</p><div class="progress-track" role="progressbar" aria-label="Progression des actualités révisées" aria-valuemin="0" aria-valuemax="100" aria-valuenow="0"><span id="progress-bar"></span></div></div><div class="progress-stats"><div><strong id="read-count">0 / 0</strong><span>actualités révisées</span></div><div><strong id="best-quiz-score">—</strong><span>meilleur score au quiz</span></div></div></div>
+            <div class="progress-breakdown" id="progress-breakdown"></div>
           </section>
 
           <footer class="page-footer"><span class="footer-mark">OW</span><span>OFFICIER WATCH</span><i></i><span>La fiabilité avant tout.</span></footer>
