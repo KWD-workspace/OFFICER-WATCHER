@@ -1,8 +1,8 @@
 /* Archive de veille relue et sourcée. La tâche hebdomadaire conserve les 365 derniers jours. */
 window.OFFICIER_WATCH_DATA = {
   schemaVersion: 1,
-  updatedAt: "2026-10-31T02:13:00+02:00",
-  periodStart: "2026-10-24",
+  updatedAt: "2026-10-31T12:00:00+01:00",
+  periodStart: "2025-11-01",
   periodEnd: "2026-10-31",
   items: [
     {
@@ -305,6 +305,256 @@ window.OFFICIER_WATCH_DATA = {
       sourceTitle: "Ministère de la Justice — opération « zéro portable en prison »",
       sourceUrl: "https://www.justice.gouv.fr/actualites/espace-presse/operation-zero-portable-prison-gerald-darmanin-lance-plan-securisation-6-etablissements",
       legalStatus: "Plan de sécurisation annoncé — mesures opérationnelles"
+    },
+    {
+      id: "interstats-octobre-2026-10-06",
+      title: "Interstats Conjoncture n° 133 : données de délinquance enregistrée de septembre 2026",
+      publishedAt: "2026-10-06",
+      eventDate: "2026-10-06",
+      category: "Statistiques & sécurité",
+      tags: ["Interstats", "SSMSI", "délinquance", "statistiques", "police", "gendarmerie"],
+      priority: 2,
+      summary: "Le SSMSI publie l’édition n° 133 de son analyse mensuelle des crimes et délits enregistrés par la police et la gendarmerie à la fin de septembre 2026. La fiche renvoie à la publication institutionnelle et à ses données détaillées.",
+      whyItMatters: "Cette série permet de suivre les évolutions de la délinquance enregistrée. Pour toute comparaison, consulter les définitions, les périodes et les précautions méthodologiques de la publication source.",
+      keyPoints: [
+        "Publication officielle du SSMSI datée du 2026-10-06.",
+        "Édition n° 133 de la série Interstats Conjoncture.",
+        "Analyse mensuelle des faits enregistrés par police et gendarmerie à la fin de septembre 2026."
+      ],
+      sourceTitle: "SSMSI — Interstats Conjoncture n° 133, Octobre 2026",
+      sourceUrl: "https://statistiques.interieur.gouv.fr/ssmsi/publications/interstats-conjoncture-ndeg-133-octobre-2026",
+      legalStatus: "Publication statistique conjoncturelle"
+    },
+    {
+      id: "interstats-septembre-2026-09-04",
+      title: "Interstats Conjoncture n° 132 : données de délinquance enregistrée de août 2026",
+      publishedAt: "2026-09-04",
+      eventDate: "2026-09-04",
+      category: "Statistiques & sécurité",
+      tags: ["Interstats", "SSMSI", "délinquance", "statistiques", "police", "gendarmerie"],
+      priority: 2,
+      summary: "Le SSMSI publie l’édition n° 132 de son analyse mensuelle des crimes et délits enregistrés par la police et la gendarmerie à la fin de août 2026. La fiche renvoie à la publication institutionnelle et à ses données détaillées.",
+      whyItMatters: "Cette série permet de suivre les évolutions de la délinquance enregistrée. Pour toute comparaison, consulter les définitions, les périodes et les précautions méthodologiques de la publication source.",
+      keyPoints: [
+        "Publication officielle du SSMSI datée du 2026-09-04.",
+        "Édition n° 132 de la série Interstats Conjoncture.",
+        "Analyse mensuelle des faits enregistrés par police et gendarmerie à la fin de août 2026."
+      ],
+      sourceTitle: "SSMSI — Interstats Conjoncture n° 132, Septembre 2026",
+      sourceUrl: "https://statistiques.interieur.gouv.fr/ssmsi/publications/interstats-conjoncture-ndeg-132-septembre-2026",
+      legalStatus: "Publication statistique conjoncturelle"
+    },
+    {
+      id: "interstats-aout-2026-08-06",
+      title: "Interstats Conjoncture n° 131 : données de délinquance enregistrée de juillet 2026",
+      publishedAt: "2026-08-06",
+      eventDate: "2026-08-06",
+      category: "Statistiques & sécurité",
+      tags: ["Interstats", "SSMSI", "délinquance", "statistiques", "police", "gendarmerie"],
+      priority: 2,
+      summary: "Le SSMSI publie l’édition n° 131 de son analyse mensuelle des crimes et délits enregistrés par la police et la gendarmerie à la fin de juillet 2026. La fiche renvoie à la publication institutionnelle et à ses données détaillées.",
+      whyItMatters: "Cette série permet de suivre les évolutions de la délinquance enregistrée. Pour toute comparaison, consulter les définitions, les périodes et les précautions méthodologiques de la publication source.",
+      keyPoints: [
+        "Publication officielle du SSMSI datée du 2026-08-06.",
+        "Édition n° 131 de la série Interstats Conjoncture.",
+        "Analyse mensuelle des faits enregistrés par police et gendarmerie à la fin de juillet 2026."
+      ],
+      sourceTitle: "SSMSI — Interstats Conjoncture n° 131, Août 2026",
+      sourceUrl: "https://statistiques.interieur.gouv.fr/ssmsi/publications/interstats-conjoncture-ndeg-131-aout-2026",
+      legalStatus: "Publication statistique conjoncturelle"
+    },
+    {
+      id: "interstats-juillet-2026-07-06",
+      title: "Interstats Conjoncture n° 130 : données de délinquance enregistrée de juin 2026",
+      publishedAt: "2026-07-06",
+      eventDate: "2026-07-06",
+      category: "Statistiques & sécurité",
+      tags: ["Interstats", "SSMSI", "délinquance", "statistiques", "police", "gendarmerie"],
+      priority: 2,
+      summary: "Le SSMSI publie l’édition n° 130 de son analyse mensuelle des crimes et délits enregistrés par la police et la gendarmerie à la fin de juin 2026. La fiche renvoie à la publication institutionnelle et à ses données détaillées.",
+      whyItMatters: "Cette série permet de suivre les évolutions de la délinquance enregistrée. Pour toute comparaison, consulter les définitions, les périodes et les précautions méthodologiques de la publication source.",
+      keyPoints: [
+        "Publication officielle du SSMSI datée du 2026-07-06.",
+        "Édition n° 130 de la série Interstats Conjoncture.",
+        "Analyse mensuelle des faits enregistrés par police et gendarmerie à la fin de juin 2026."
+      ],
+      sourceTitle: "SSMSI — Interstats Conjoncture n° 130, Juillet 2026",
+      sourceUrl: "https://statistiques.interieur.gouv.fr/ssmsi/publications/interstats-conjoncture-ndeg-130-juillet-2026",
+      legalStatus: "Publication statistique conjoncturelle"
+    },
+    {
+      id: "interstats-juin-2026-06-04",
+      title: "Interstats Conjoncture n° 129 : données de délinquance enregistrée de mai 2026",
+      publishedAt: "2026-06-04",
+      eventDate: "2026-06-04",
+      category: "Statistiques & sécurité",
+      tags: ["Interstats", "SSMSI", "délinquance", "statistiques", "police", "gendarmerie"],
+      priority: 2,
+      summary: "Le SSMSI publie l’édition n° 129 de son analyse mensuelle des crimes et délits enregistrés par la police et la gendarmerie à la fin de mai 2026. La fiche renvoie à la publication institutionnelle et à ses données détaillées.",
+      whyItMatters: "Cette série permet de suivre les évolutions de la délinquance enregistrée. Pour toute comparaison, consulter les définitions, les périodes et les précautions méthodologiques de la publication source.",
+      keyPoints: [
+        "Publication officielle du SSMSI datée du 2026-06-04.",
+        "Édition n° 129 de la série Interstats Conjoncture.",
+        "Analyse mensuelle des faits enregistrés par police et gendarmerie à la fin de mai 2026."
+      ],
+      sourceTitle: "SSMSI — Interstats Conjoncture n° 129, Juin 2026",
+      sourceUrl: "https://statistiques.interieur.gouv.fr/ssmsi/publications/interstats-conjoncture-ndeg-129-juin-2026",
+      legalStatus: "Publication statistique conjoncturelle"
+    },
+    {
+      id: "interstats-mai-2026-05-07",
+      title: "Interstats Conjoncture n° 128 : données de délinquance enregistrée de avril 2026",
+      publishedAt: "2026-05-07",
+      eventDate: "2026-05-07",
+      category: "Statistiques & sécurité",
+      tags: ["Interstats", "SSMSI", "délinquance", "statistiques", "police", "gendarmerie"],
+      priority: 2,
+      summary: "Le SSMSI publie l’édition n° 128 de son analyse mensuelle des crimes et délits enregistrés par la police et la gendarmerie à la fin de avril 2026. La fiche renvoie à la publication institutionnelle et à ses données détaillées.",
+      whyItMatters: "Cette série permet de suivre les évolutions de la délinquance enregistrée. Pour toute comparaison, consulter les définitions, les périodes et les précautions méthodologiques de la publication source.",
+      keyPoints: [
+        "Publication officielle du SSMSI datée du 2026-05-07.",
+        "Édition n° 128 de la série Interstats Conjoncture.",
+        "Analyse mensuelle des faits enregistrés par police et gendarmerie à la fin de avril 2026."
+      ],
+      sourceTitle: "SSMSI — Interstats Conjoncture n° 128, Mai 2026",
+      sourceUrl: "https://statistiques.interieur.gouv.fr/ssmsi/publications/interstats-conjoncture-ndeg-128-mai-2026",
+      legalStatus: "Publication statistique conjoncturelle"
+    },
+    {
+      id: "interstats-mars-2026-03-05",
+      title: "Interstats Conjoncture n° 126 : données de délinquance enregistrée de février 2026",
+      publishedAt: "2026-03-05",
+      eventDate: "2026-03-05",
+      category: "Statistiques & sécurité",
+      tags: ["Interstats", "SSMSI", "délinquance", "statistiques", "police", "gendarmerie"],
+      priority: 2,
+      summary: "Le SSMSI publie l’édition n° 126 de son analyse mensuelle des crimes et délits enregistrés par la police et la gendarmerie à la fin de février 2026. La fiche renvoie à la publication institutionnelle et à ses données détaillées.",
+      whyItMatters: "Cette série permet de suivre les évolutions de la délinquance enregistrée. Pour toute comparaison, consulter les définitions, les périodes et les précautions méthodologiques de la publication source.",
+      keyPoints: [
+        "Publication officielle du SSMSI datée du 2026-03-05.",
+        "Édition n° 126 de la série Interstats Conjoncture.",
+        "Analyse mensuelle des faits enregistrés par police et gendarmerie à la fin de février 2026."
+      ],
+      sourceTitle: "SSMSI — Interstats Conjoncture n° 126, Mars 2026",
+      sourceUrl: "https://statistiques.interieur.gouv.fr/ssmsi/publications/interstats-conjoncture-ndeg-126-mars-2026",
+      legalStatus: "Publication statistique conjoncturelle"
+    },
+    {
+      id: "interstats-fevrier-2026-02-05",
+      title: "Interstats Conjoncture n° 125 : données de délinquance enregistrée de janvier 2026",
+      publishedAt: "2026-02-05",
+      eventDate: "2026-02-05",
+      category: "Statistiques & sécurité",
+      tags: ["Interstats", "SSMSI", "délinquance", "statistiques", "police", "gendarmerie"],
+      priority: 2,
+      summary: "Le SSMSI publie l’édition n° 125 de son analyse mensuelle des crimes et délits enregistrés par la police et la gendarmerie à la fin de janvier 2026. La fiche renvoie à la publication institutionnelle et à ses données détaillées.",
+      whyItMatters: "Cette série permet de suivre les évolutions de la délinquance enregistrée. Pour toute comparaison, consulter les définitions, les périodes et les précautions méthodologiques de la publication source.",
+      keyPoints: [
+        "Publication officielle du SSMSI datée du 2026-02-05.",
+        "Édition n° 125 de la série Interstats Conjoncture.",
+        "Analyse mensuelle des faits enregistrés par police et gendarmerie à la fin de janvier 2026."
+      ],
+      sourceTitle: "SSMSI — Interstats Conjoncture n° 125, Février 2026",
+      sourceUrl: "https://statistiques.interieur.gouv.fr/ssmsi/publications/interstats-conjoncture-ndeg-125-fevrier-2026",
+      legalStatus: "Publication statistique conjoncturelle"
+    },
+    {
+      id: "interstats-janvier-2026-01-07",
+      title: "Interstats Conjoncture n° 124 : données de délinquance enregistrée de décembre 2025",
+      publishedAt: "2026-01-07",
+      eventDate: "2026-01-07",
+      category: "Statistiques & sécurité",
+      tags: ["Interstats", "SSMSI", "délinquance", "statistiques", "police", "gendarmerie"],
+      priority: 2,
+      summary: "Le SSMSI publie l’édition n° 124 de son analyse mensuelle des crimes et délits enregistrés par la police et la gendarmerie à la fin de décembre 2025. La fiche renvoie à la publication institutionnelle et à ses données détaillées.",
+      whyItMatters: "Cette série permet de suivre les évolutions de la délinquance enregistrée. Pour toute comparaison, consulter les définitions, les périodes et les précautions méthodologiques de la publication source.",
+      keyPoints: [
+        "Publication officielle du SSMSI datée du 2026-01-07.",
+        "Édition n° 124 de la série Interstats Conjoncture.",
+        "Analyse mensuelle des faits enregistrés par police et gendarmerie à la fin de décembre 2025."
+      ],
+      sourceTitle: "SSMSI — Interstats Conjoncture n° 124, Janvier 2026",
+      sourceUrl: "https://statistiques.interieur.gouv.fr/ssmsi/publications/interstats-conjoncture-ndeg-124-janvier-2026",
+      legalStatus: "Publication statistique conjoncturelle"
+    },
+    {
+      id: "interstats-novembre-2025-11-06",
+      title: "Interstats Conjoncture n° 122 : données de délinquance enregistrée de octobre 2025",
+      publishedAt: "2025-11-06",
+      eventDate: "2025-11-06",
+      category: "Statistiques & sécurité",
+      tags: ["Interstats", "SSMSI", "délinquance", "statistiques", "police", "gendarmerie"],
+      priority: 2,
+      summary: "Le SSMSI publie l’édition n° 122 de son analyse mensuelle des crimes et délits enregistrés par la police et la gendarmerie à la fin de octobre 2025. La fiche renvoie à la publication institutionnelle et à ses données détaillées.",
+      whyItMatters: "Cette série permet de suivre les évolutions de la délinquance enregistrée. Pour toute comparaison, consulter les définitions, les périodes et les précautions méthodologiques de la publication source.",
+      keyPoints: [
+        "Publication officielle du SSMSI datée du 2025-11-06.",
+        "Édition n° 122 de la série Interstats Conjoncture.",
+        "Analyse mensuelle des faits enregistrés par police et gendarmerie à la fin de octobre 2025."
+      ],
+      sourceTitle: "SSMSI — Interstats Conjoncture n° 122, Novembre 2025",
+      sourceUrl: "https://statistiques.interieur.gouv.fr/ssmsi/publications/interstats-conjoncture-ndeg-122-novembre-2025",
+      legalStatus: "Publication statistique conjoncturelle"
+    },
+    {
+      id: "loi-justice-criminelle-victimes-2026-07-23",
+      title: "Justice criminelle et droits des victimes : loi promulguée le 23 juillet 2026",
+      publishedAt: "2026-07-24",
+      eventDate: "2026-07-23",
+      category: "Justice & droit",
+      tags: ["justice criminelle", "victimes", "enquête", "procédure pénale", "Légifrance"],
+      priority: 1,
+      summary: "La loi n° 2026-651 du 23 juillet 2026 sur la justice criminelle et le respect des victimes a été publiée au Journal officiel du 24 juillet. Elle porte notamment sur l’organisation de la justice criminelle, les moyens d’investigation et la prise en charge des victimes.",
+      whyItMatters: "Le texte intéresse directement la procédure pénale et les droits des victimes. Ses dispositions n’ont pas toutes nécessairement les mêmes règles d’entrée en vigueur ; consulter chaque article dans sa version à jour.",
+      keyPoints: [
+        "Loi n° 2026-651 promulguée le 23 juillet et publiée le 24 juillet 2026.",
+        "Le texte comprend des dispositions sur l’organisation de la justice criminelle et les moyens d’investigation.",
+        "Légifrance indique une entrée en vigueur au 21 octobre 2026 pour la version consultée."
+      ],
+      sourceTitle: "Légifrance — loi n° 2026-651 du 23 juillet 2026",
+      sourceUrl: "https://www.legifrance.gouv.fr/loda/id/JORFTEXT000054470584/",
+      sources: [
+        { title: "Assemblée nationale — dossier législatif et étapes de la loi", url: "https://questions.assemblee-nationale.fr/dyn/17/dossiers/DLR5L17N53940" }
+      ],
+      legalStatus: "Loi promulguée ; entrée en vigueur et application à vérifier disposition par disposition"
+    },
+    {
+      id: "presomption-legitime-defense-forces-ordre-2026-07-07",
+      title: "Présomption de légitime défense des forces de l’ordre : adoption à l’Assemblée nationale",
+      publishedAt: "2026-07-07",
+      eventDate: "2026-07-07",
+      category: "Police & sécurité",
+      tags: ["légitime défense", "forces de l’ordre", "Assemblée nationale", "proposition de loi"],
+      priority: 1,
+      summary: "Le 7 juillet 2026, l’Assemblée nationale a adopté en première lecture une proposition de loi visant à reconnaître une présomption de légitime défense aux forces de l’ordre dans l’exercice de leurs fonctions. Le dossier officiel indique ensuite son dépôt au Sénat.",
+      whyItMatters: "Le sujet touche au cadre légal d’usage de la force et à la responsabilité pénale. Une adoption par une seule assemblée ne fait pas une loi promulguée : suivre le dossier parlementaire avant de présenter une règle applicable.",
+      keyPoints: [
+        "Adoption par l’Assemblée nationale le 7 juillet 2026, en première lecture.",
+        "Le texte a été transmis au Sénat pour la suite de la procédure.",
+        "Le dossier parlementaire consulté ne présente pas cette proposition comme une loi promulguée."
+      ],
+      sourceTitle: "Assemblée nationale — dossier législatif de la proposition de loi",
+      sourceUrl: "https://www.assemblee-nationale.fr/dyn/17/dossiers/DLR5L17N51037",
+      legalStatus: "Proposition adoptée en première lecture à l’Assemblée nationale ; procédure parlementaire à suivre"
+    },
+    {
+      id: "ujpe-justice-mineurs-2026-09-01",
+      title: "Justice des mineurs : ouverture de 85 unités judiciaires à priorité éducative",
+      publishedAt: "2026-09-01",
+      eventDate: "2026-09-01",
+      category: "Justice & droit",
+      tags: ["justice des mineurs", "PJJ", "UJPE", "placement", "prévention récidive"],
+      priority: 1,
+      summary: "Le 1er septembre 2026, la Protection judiciaire de la jeunesse a ouvert 85 unités judiciaires à priorité éducative. Elles unifient les anciens centres éducatifs fermés et unités éducatives d’hébergement collectif dans un nouveau cadre de placement pénal des mineurs.",
+      whyItMatters: "La réforme concerne la réponse éducative à la délinquance des mineurs, l’exécution des décisions judiciaires et la prévention de la récidive.",
+      keyPoints: [
+        "85 UJPE ouvertes à partir du 1er septembre 2026 selon le ministère de la Justice.",
+        "Elles regroupent les fonctions auparavant assurées par les CEF et les UEHC.",
+        "Le ministère présente l’accompagnement éducatif et l’insertion comme objectifs centraux."
+      ],
+      sourceTitle: "Ministère de la Justice — entrée en fonction des premières UJPE",
+      sourceUrl: "https://www.justice.gouv.fr/actualites/actualite/justice-mineurs-premieres-unites-judiciaires-priorite-educative-entrent-fonction",
+      legalStatus: "Réforme entrée en vigueur le 1er septembre 2026"
     }
   ]
 };
