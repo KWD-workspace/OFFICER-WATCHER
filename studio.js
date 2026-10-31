@@ -30,6 +30,30 @@
   const quizReviseCopy = document.getElementById("quiz-revise-copy");
   const quizReviseList = document.getElementById("quiz-revise-list");
   const quizRestart = document.getElementById("quiz-restart");
+  const flashcardsLaunch = document.getElementById("flashcards-launch");
+  const quickQuizLaunch = document.getElementById("quick-quiz-launch");
+  const oralLaunch = document.getElementById("oral-launch");
+  const revisionWorkspace = document.getElementById("revision-workspace");
+  const revisionModeLabel = document.getElementById("revision-mode-label");
+  const revisionTitle = document.getElementById("revision-title");
+  const revisionDescription = document.getElementById("revision-description");
+  const revisionClose = document.getElementById("revision-close");
+  const flashcardsPanel = document.getElementById("flashcards-panel");
+  const flashcardProgress = document.getElementById("flashcard-progress");
+  const flashcardQuestion = document.getElementById("flashcard-question");
+  const flashcardAnswer = document.getElementById("flashcard-answer");
+  const flashcardSource = document.getElementById("flashcard-source");
+  const flashcardPrevious = document.getElementById("flashcard-previous");
+  const flashcardReveal = document.getElementById("flashcard-reveal");
+  const flashcardNext = document.getElementById("flashcard-next");
+  const oralPanel = document.getElementById("oral-panel");
+  const oralCategory = document.getElementById("oral-category");
+  const oralQuestion = document.getElementById("oral-question");
+  const oralSource = document.getElementById("oral-source");
+  const oralAnswer = document.getElementById("oral-answer");
+  const oralEvaluate = document.getElementById("oral-evaluate");
+  const oralNext = document.getElementById("oral-next");
+  const oralFeedback = document.getElementById("oral-feedback");
   const copilotForm = document.getElementById("copilot-form");
   const copilotQuery = document.getElementById("copilot-query");
   const copilotResponse = document.getElementById("copilot-response");
@@ -58,6 +82,11 @@
   let quizIndex = 0;
   let quizScore = 0;
   let quizResponses = [];
+  let quizMode = "full";
+  let flashcardDeck = [];
+  let flashcardIndex = 0;
+  let oralDeck = [];
+  let oralIndex = 0;
   let bestQuizScore = loadBestQuizScore();
 
   function loadReadArticleIds() {
@@ -333,6 +362,116 @@
     });
   }
 
+  function showRevisionWorkspace(mode, heading, description) {
+    revisionWorkspace.hidden = false;
+    flashcardsPanel.hidden = mode !== "flashcards";
+    oralPanel.hidden = mode !== "oral";
+    revisionModeLabel.textContent = mode === "flashcards" ? "RÉVISION ACTIVE" : "ENTRAÎNEMENT ORAL";
+    revisionTitle.textContent = heading;
+    revisionDescription.textContent = description;
+    revisionWorkspace.scrollIntoView({ behavior: "smooth", block: "start" });
+  }
+
+  function buildFlashcardDeck(items) {
+    return items.flatMap((item) => {
+      const facts = Array.isArray(item.keyPoints) && item.keyPoints.length ? item.keyPoints : [item.summary];
+      return facts.filter((fact) => typeof fact === "string" && fact.trim()).map((fact) => ({
+        title: item.title,
+        category: item.category || "Actualité",
+        fact: fact.trim(),
+        sourceTitle: item.sourceTitle,
+        sourceUrl: item.sourceUrl
+      }));
+    });
+  }
+
+  function showFlashcard() {
+    const card = flashcardDeck[flashcardIndex];
+    if (!card) {
+      flashcardProgress.textContent = "Aucune carte disponible dans l’archive.";
+      flashcardQuestion.textContent = "Ajoute des actualités avec des points clés pour créer des cartes mémoire.";
+      flashcardAnswer.hidden = true;
+      flashcardSource.hidden = true;
+      return;
+    }
+    flashcardProgress.textContent = `Carte ${flashcardIndex + 1} sur ${flashcardDeck.length} · ${card.category}`;
+    flashcardQuestion.textContent = card.title;
+    flashcardAnswer.textContent = card.fact;
+    flashcardAnswer.hidden = true;
+    flashcardSource.href = card.sourceUrl;
+    flashcardSource.textContent = `↗ ${card.sourceTitle}`;
+    flashcardSource.hidden = true;
+    flashcardReveal.textContent = "Voir la réponse";
+    flashcardPrevious.disabled = flashcardDeck.length < 2;
+    flashcardNext.disabled = flashcardDeck.length < 2;
+  }
+
+  function startFlashcards() {
+    const items = Array.isArray(window.OFFICIER_WATCH_DATA?.items)
+      ? window.OFFICIER_WATCH_DATA.items.filter(validItem)
+      : [];
+    flashcardDeck = shuffle(buildFlashcardDeck(items));
+    flashcardIndex = 0;
+    showRevisionWorkspace("flashcards", "Cartes mémoire", "Essaie de retrouver le fait avant de révéler la réponse. Les cartes reprennent les points clés et leurs sources.");
+    showFlashcard();
+    flashcardReveal.disabled = !flashcardDeck.length;
+  }
+
+  function showOralPrompt() {
+    const item = oralDeck[oralIndex % oralDeck.length];
+    oralCategory.textContent = item.category || "Actualité";
+    oralQuestion.textContent = `Présente cette actualité et explique pourquoi elle compte : ${item.title}`;
+    oralSource.href = item.sourceUrl;
+    oralSource.textContent = `↗ ${item.sourceTitle}`;
+    oralAnswer.value = "";
+    oralFeedback.replaceChildren();
+    oralFeedback.hidden = true;
+    oralNext.hidden = true;
+  }
+
+  function startOralPractice() {
+    const items = Array.isArray(window.OFFICIER_WATCH_DATA?.items)
+      ? window.OFFICIER_WATCH_DATA.items.filter(validItem)
+      : [];
+    oralDeck = shuffle(items);
+    oralIndex = 0;
+    showRevisionWorkspace("oral", "Simulation orale", "Présente les faits et l’enjeu sans lire la synthèse, puis compare ta réponse aux repères sourcés.");
+    if (!oralDeck.length) {
+      oralQuestion.textContent = "Aucune actualité n’est disponible pour créer un sujet oral.";
+      oralCategory.textContent = "Archive vide";
+      oralSource.hidden = true;
+      oralAnswer.disabled = true;
+      oralEvaluate.disabled = true;
+      return;
+    }
+    oralSource.hidden = false;
+    oralAnswer.disabled = false;
+    oralEvaluate.disabled = false;
+    showOralPrompt();
+  }
+
+  function showOralFeedback() {
+    if (oralAnswer.value.trim().length < 20) {
+      oralFeedback.replaceChildren(makeText("p", "tool-hint", "Essaie d’abord de formuler quelques phrases, puis compare ta réponse aux repères."));
+      oralFeedback.hidden = false;
+      return;
+    }
+    const item = oralDeck[oralIndex % oralDeck.length];
+    oralFeedback.replaceChildren();
+    oralFeedback.append(makeText("h4", "", "Voici les repères de la source"));
+    oralFeedback.append(makeText("p", "", item.summary));
+    if (Array.isArray(item.keyPoints) && item.keyPoints.length) {
+      const points = document.createElement("ul");
+      item.keyPoints.forEach((point) => points.append(makeText("li", "", point)));
+      oralFeedback.append(points);
+    }
+    if (item.whyItMatters) oralFeedback.append(makeText("p", "oral-relevance", `Pour le concours : ${item.whyItMatters}`));
+    if (item.legalStatus) oralFeedback.append(makeText("p", "legal-status", item.legalStatus));
+    oralFeedback.append(makeText("p", "oral-self-check", "Vérifie que ta réponse distingue les faits, leur source et l’enjeu pour l’action publique."));
+    oralFeedback.hidden = false;
+    oralNext.hidden = false;
+  }
+
   function answerCopilot(items, query) {
     copilotResponse.replaceChildren();
     const terms = normalizeText(query).split(/\s+/).filter((term) => term.length > 1);
@@ -458,9 +597,17 @@
     });
   }
 
-  function startQuiz() {
+  function startQuiz(quick = false) {
+    const items = Array.isArray(window.OFFICIER_WATCH_DATA?.items)
+      ? window.OFFICIER_WATCH_DATA.items.filter(validItem)
+      : [];
+    const availableQuestions = buildQuizQuestions(items);
+    quizMode = quick ? "quick" : "full";
+    quizQuestions = shuffle(quick ? availableQuestions.slice(0, 5) : availableQuestions);
     if (!quizQuestions.length) return;
-    quizQuestions = shuffle(quizQuestions);
+    quizSummary.textContent = quick
+      ? `Quiz rapide · ${quizQuestions.length} questions`
+      : `${items.length} actualité${items.length === 1 ? "" : "s"} dans le quiz`;
     quizIndex = 0;
     quizScore = 0;
     quizResponses = [];
@@ -487,7 +634,7 @@
     const result = { score: quizScore, total: quizQuestions.length };
     const previousRatio = bestQuizScore ? bestQuizScore.score / bestQuizScore.total : -1;
     const currentRatio = result.total ? result.score / result.total : 0;
-    if (!bestQuizScore || currentRatio > previousRatio) {
+    if (quizMode === "full" && (!bestQuizScore || currentRatio > previousRatio)) {
       bestQuizScore = result;
       try {
         localStorage.setItem(quizScoreStorageKey, JSON.stringify(bestQuizScore));
@@ -512,7 +659,7 @@
     quizNext.hidden = true;
     quizIntro.hidden = true;
     quizResult.hidden = false;
-    quizResultScore.textContent = `${quizScore} / ${quizQuestions.length} bonnes réponses`;
+    quizResultScore.textContent = `${quizScore} / ${quizQuestions.length} bonnes réponses${quizMode === "quick" ? " · quiz rapide" : " · quiz complet"}`;
     quizSuccessCopy.textContent = successes.length
       ? `Tu as réussi ${successes.length} question${successes.length === 1 ? "" : "s"}${successTopics.length ? `, surtout sur ${successTopics.join(", ")}` : ""}.`
       : "Tu n’as pas encore trouvé tes repères dans cette série. Reprends quelques actualités puis réessaie.";
@@ -650,8 +797,36 @@
       : [];
     renderLibrary(items);
   });
-  quizStart.addEventListener("click", startQuiz);
-  quizRestart.addEventListener("click", startQuiz);
+  flashcardsLaunch.addEventListener("click", startFlashcards);
+  quickQuizLaunch.addEventListener("click", () => {
+    startQuiz(true);
+    document.getElementById("quiz").scrollIntoView({ behavior: "smooth", block: "start" });
+  });
+  oralLaunch.addEventListener("click", startOralPractice);
+  revisionClose.addEventListener("click", () => { revisionWorkspace.hidden = true; });
+  flashcardReveal.addEventListener("click", () => {
+    flashcardAnswer.hidden = !flashcardAnswer.hidden;
+    flashcardSource.hidden = flashcardAnswer.hidden;
+    flashcardReveal.textContent = flashcardAnswer.hidden ? "Voir la réponse" : "Masquer la réponse";
+  });
+  flashcardPrevious.addEventListener("click", () => {
+    if (!flashcardDeck.length) return;
+    flashcardIndex = (flashcardIndex - 1 + flashcardDeck.length) % flashcardDeck.length;
+    showFlashcard();
+  });
+  flashcardNext.addEventListener("click", () => {
+    if (!flashcardDeck.length) return;
+    flashcardIndex = (flashcardIndex + 1) % flashcardDeck.length;
+    showFlashcard();
+  });
+  oralEvaluate.addEventListener("click", showOralFeedback);
+  oralNext.addEventListener("click", () => {
+    if (!oralDeck.length) return;
+    oralIndex = (oralIndex + 1) % oralDeck.length;
+    showOralPrompt();
+  });
+  quizStart.addEventListener("click", () => startQuiz(false));
+  quizRestart.addEventListener("click", () => startQuiz(quizMode === "quick"));
   quizNext.addEventListener("click", () => {
     quizIndex += 1;
     if (quizIndex >= quizQuestions.length) renderQuizResult();
