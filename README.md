@@ -14,7 +14,7 @@ La collecte planifiée dépend de l’exécution des automatisations locales Cod
 
 ## Explorer et réviser l’archive
 
-La veille peut être filtrée sur 7, 30 ou 90 jours, sur un an, ou sur une période personnalisée. La recherche porte sur les titres, résumés, points clés et tags ; les catégories peuvent également être sélectionnées. Les articles favoris sont enregistrés dans le navigateur utilisé. Le quiz pose une question par actualité de l’archive, même si les filtres masquent certains articles.
+La veille peut être filtrée sur 7, 30 ou 90 jours, sur un an, ou sur une période personnalisée. La recherche porte sur les titres, résumés, points clés et tags ; les catégories peuvent également être sélectionnées. Les favoris, articles révisés et meilleurs scores sont conservés dans le navigateur utilisé. Le quiz pose une question par actualité de l’archive, même si les filtres masquent certains articles. Le Copilote et la Bibliothèque retrouvent les contenus archivés et leurs sources ; la section Lois & réformes rassemble les sujets juridiques.
 
 ## Fichiers
 
@@ -26,4 +26,4 @@ La veille peut être filtrée sur 7, 30 ou 90 jours, sur un an, ou sur une péri
 
 ## Limites actuelles
 
-Le studio reste un site statique : les favoris sont propres à un navigateur et ne sont pas synchronisés entre appareils. La tâche hebdomadaire Codex met à jour le fichier de données local ; le bouton **Synchroniser** recharge ce fichier dans le studio, mais ne lance pas une recherche web ni une publication GitHub. Pour mettre à jour GitHub Pages, la nouvelle version des données doit être publiée dans le dépôt. Le copilote et les autres exercices interactifs restent à développer. Aucun contenu d’actualité fictif n’est affiché comme un fait.
+Le studio reste un site statique : les favoris et la progression sont propres à un navigateur et ne sont pas synchronisés entre appareils. Le Copilote recherche des contenus pertinents dans l’archive et ne rédige pas de réponses générées par IA. La tâche hebdomadaire Codex met à jour le fichier de données local ; le bouton **Synchroniser** recharge ce fichier dans le studio, mais ne lance pas une recherche web ni une publication GitHub. Pour mettre à jour GitHub Pages, la nouvelle version des données doit être publiée dans le dépôt. Aucun contenu d’actualité fictif n’est affiché comme un fait.
