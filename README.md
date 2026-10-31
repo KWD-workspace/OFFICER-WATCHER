@@ -14,7 +14,7 @@ La collecte planifiée dépend de l’exécution des automatisations locales Cod
 
 ## Explorer et réviser l’archive
 
-La veille peut être filtrée sur 7, 30 ou 90 jours, sur un an, ou sur une période personnalisée. La recherche porte sur les titres, résumés, points clés et tags ; les catégories peuvent également être sélectionnées. Les favoris, articles révisés et meilleurs scores sont conservés dans le navigateur utilisé. Le quiz pose une question par actualité de l’archive, même si les filtres masquent certains articles. Le Copilote et la Bibliothèque retrouvent les contenus archivés et leurs sources ; la section Lois & réformes rassemble les sujets juridiques.
+La veille peut être filtrée sur 7, 30 ou 90 jours, sur un an, ou sur une période personnalisée. La recherche porte sur les titres, résumés, points clés et tags ; les catégories peuvent également être sélectionnées. Les favoris, articles révisés et meilleurs scores sont conservés dans le navigateur utilisé. Le quiz complet pose une question par actualité archivée ; le quiz rapide en pose cinq. Les cartes mémoire utilisent les points clés sourcés, et la simulation orale permet de comparer sa réponse à la synthèse et aux repères de l’actualité. Le Copilote et la Bibliothèque retrouvent les contenus archivés et leurs sources ; la section Lois & réformes rassemble les sujets juridiques.
 
 ## Fichiers
 
